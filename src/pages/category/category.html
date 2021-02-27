@@ -1,0 +1,23 @@
+<ion-header class="bg-img">
+    <ion-navbar>
+        <ion-title></ion-title>
+    </ion-navbar>
+    <div class="text_box ">
+        <h1 text-center>{{category}}</h1>
+    </div>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <ion-list no-lines>
+        <ion-item *ngFor="let data of subcat" (click)="list_of_plumber(data.id, data.name)">
+            <h2 class="d-flex"><span>{{data.name}}</span>
+                <ion-icon class="material-icons end">keyboard_arrow_right</ion-icon>
+            </h2>
+            <p *ngIf="data.min_order_amt > 0">Minimum Order - ₹{{data.min_order_amt}}</p>
+            <p *ngIf="data.min_order_amt == 0 && data.visiting_charge > 0">Visiting Charge - ₹{{data.visiting_charge}}</p>
+        </ion-item>
+    </ion-list>
+</ion-content>

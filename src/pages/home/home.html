@@ -1,0 +1,61 @@
+<ion-header class="bg-img">
+    <ion-navbar>
+        <ion-title>
+            <ion-icon class="material-icons">location_on</ion-icon>
+            <span>{{location}}</span>
+        </ion-title>
+    </ion-navbar>
+    <div class="text_box">
+        <h2>Hey {{user.name}},</h2>
+        <ion-row>
+            <ion-slides>
+                <ion-slide *ngFor="let banner of banner_images">
+                    <img [src]="banner.image" width="380" height="270"/>
+                </ion-slide>
+            </ion-slides>
+        </ion-row>
+        <ion-row>
+            <ion-col col class="search_icon">
+                <ion-icon class="material-icons">search</ion-icon>
+            </ion-col>
+            <ion-col col>
+                <ion-searchbar (search)="getItems($event)" placeholder="{{'search_placeholder' | translate}}"></ion-searchbar>
+            </ion-col>
+        </ion-row>
+    </div>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <div class="categores_container">
+        <ion-row>
+            <ion-col *ngFor="let data of categories" col-6 (click)="category(data.id, data.name)">
+                <div class="categore d-flex">
+                    <div class="img_box center_img">
+                        <!-- <img src="{{'https://everythingservices.in/admin14'+data.image}}" class="crop_img"> -->
+                        <img-loader [src]="'https://everythingservices.in/admin14'+data.image" useImg [imgAttributes]="imageAttributes"></img-loader>
+                    </div>
+                    <h2 text-uppercase>{{data.name}}</h2>
+                </div>
+            </ion-col>
+        </ion-row>
+    </div>
+</ion-content>
+<div *ngIf="!hidePop" class="modal-pop">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <!-- <h2>{{popHeading}}</h2> -->
+            <button class="close-btn" (click)="hidePop=true"> &#10006;</button>
+        </div>
+        <div class="modal-body">
+            <!-- <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur unde culpa dolorum harum, maxime
+                voluptatibus illo ipsam possimus vitae corrupti quisquam laboriosam aliquid nemo facere velit
+                blanditiis odio iusto fuga!
+            </p> -->
+            <img [src]="popup_image" [title]="popHeading" [alt]="popHeading" />
+        </div>
+    </div>
+</div>

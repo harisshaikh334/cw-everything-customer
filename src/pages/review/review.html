@@ -1,0 +1,43 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>{{'submit_review' | translate}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div class="banner">
+        <ion-list no-lines>
+            <ion-item (click)="plumber_profile()">
+                <div class="img_box center_img" item-start>
+                    <img src="assets/imgs/plumber_profile.png" class="crop_img">
+                </div>
+                <h2 class="d-flex"><span>George Willamson</span>
+                    <ion-badge class="end">4.1 <ion-icon class="material-icons">star</ion-icon>
+                    </ion-badge>
+                </h2>
+                <h3>Plumber</h3>
+                <p class="d-flex">2.8km away <span class="end">$ 9.50 per Hour</span></p>
+            </ion-item>
+        </ion-list>
+    </div>
+
+    <div class="form">
+        <h2>{{'how_was_your' | translate}}<br>{{'work_experience?' | translate}}</h2>
+        <div class="rating_icons d-flex">
+            <ion-icon class="material-icons active">star</ion-icon>
+            <ion-icon class="material-icons">star</ion-icon>
+            <ion-icon class="material-icons">star</ion-icon>
+            <ion-icon class="material-icons">star</ion-icon>
+            <ion-icon class="material-icons">star</ion-icon>
+        </div>
+        <ion-list no-lines>
+            <ion-item>
+                <ion-label>{{'tell_us_words_about_ur_experience' | translate}}</ion-label>
+                <ion-textarea type="text" value="Perfect work by him. Good knowledge  pluming & fitting.  I would surely preferred him."></ion-textarea>
+            </ion-item>
+        </ion-list>
+    </div>
+</ion-content>
+<ion-footer no-border>
+    <button ion-button full no-margin class="btn"> {{'submit' | translate}}</button>
+</ion-footer>

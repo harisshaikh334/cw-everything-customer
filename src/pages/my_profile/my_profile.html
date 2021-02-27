@@ -1,0 +1,73 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>{{'my_profile' | translate}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-img">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <div class="profile">
+        <div (click)="actionSheetFile()" class="profile_img center_img">
+            <img src="{{(profile_picture) ? profile_picture : 'assets/imgs/avatar.png'}}" class="crop_img loading" onerror="this.onerror=null;this.src='assets/imgs/avatar.png';" /> 
+        </div>
+        <ion-icon (click)="actionSheetFile()" class="material-icons">camera_alt</ion-icon>
+    </div>
+    <p>Selecting image will automatically upload the picture as your display picture.</p>
+    <div class="form">
+        <form>
+            <ion-list no-lines>
+                <ion-item>
+                    <ion-icon class="material-icons" item-start>phone_android</ion-icon>
+                    <ion-label floating>{{'mobile_number' | translate}}</ion-label>
+                    <!-- <ion-input type="tel" name="mobile_number"></ion-input> -->
+                    <ion-input type="tel" [(ngModel)]="profile.mobile" name="mobile" #mobile="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" required minlength="10" maxlength="10" pattern="^[0-9{10}]+$"></ion-input>
+                </ion-item>
+                <p class='error' *ngIf="!mobile.valid  && mobile.touched">Please enter valid mobile number.</p>
+                <ion-item>
+                    <ion-icon class="material-icons" item-start>person</ion-icon>
+                    <ion-label floating>{{'full_name' | translate}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="profile.name" name="name" #name="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" required minlength="2" maxlength="100" pattern="[a-zA-Z ]*"></ion-input>
+                </ion-item>
+                <p class='error' *ngIf="!name.valid  && name.touched">Please enter valid name.</p>
+                <ion-item>
+                    <ion-icon class="material-icons" item-start>email</ion-icon>
+                    <ion-label floating>{{'email_address' | translate}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="profile.email" name="email" #email="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" minlength="10" maxlength="100" [pattern]="email_regex"></ion-input>
+                </ion-item>
+                <p class='error' *ngIf="!email.valid  && email.touched">Please enter valid email id.</p>
+                <ion-item>
+                    <ion-icon class="material-icons" item-start>shop</ion-icon>
+                    <ion-label floating>{{'Address' | translate}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="profile.address" name="address" #address="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" required maxlength="200"></ion-input>
+                </ion-item>
+                <p class='error' *ngIf="!address.valid  && address.touched">Please enter valid address.</p>
+                <button block ion-button (click)="updateProfile(profileForm)">Update Profile</button>   
+            </ion-list>
+        </form>
+    </div>
+    <div class="form">
+        <ion-list>
+            <ion-item>
+                <ion-label floating>Current Password</ion-label>
+                <ion-input type="password" [(ngModel)]="current"></ion-input>
+            </ion-item> 
+            <p class='error' *ngIf="(!current.trim()) && submitAttempt">Please enter your current password.</p>
+
+            <ion-item>
+                <ion-label floating>New Password</ion-label>
+                <ion-input type="password" [(ngModel)]="pass"></ion-input>
+            </ion-item> 
+            <p class='error' *ngIf="(!pass.trim() || pass.length < 8) && submitAttempt">Please enter password of minimum 8 characters.</p>
+
+            <ion-item>
+                <ion-label floating>Confirm Password</ion-label>
+                <ion-input type="password" [(ngModel)]="cpass"></ion-input>
+            </ion-item>
+            <p class='error' *ngIf="(!cpass.trim() || cpass.length < 8) && submitAttempt">Please confirm by re-entering the password entered above.</p>
+
+            <button block ion-button (click)="updatePass()">CHANGE PASSWORD</button>    
+        </ion-list> 
+    </div>
+</ion-content>

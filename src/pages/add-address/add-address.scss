@@ -1,0 +1,19 @@
+page-add-address {
+	ion-input.floating-with-placeholder{
+	    input:focus::-webkit-input-placeholder { opacity: 1 }
+	    input:focus:-moz-placeholder { opacity: 1 }
+	    input:focus::-moz-placeholder { opacity: 1 }
+	    input:focus:-ms-input-placeholder { opacity: 1 }
+	    input::-webkit-input-placeholder { opacity: 0 }
+	    input:-moz-placeholder { opacity: 0 }
+	    input::-moz-placeholder { opacity: 0 }
+	    input:-ms-input-placeholder { opacity: 0 }
+	}
+
+	.error{
+		margin-top: -25px
+	}
+	.error:last-child{
+		margin-bottom: 25px!important;
+	}
+}

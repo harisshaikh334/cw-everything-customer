@@ -1,0 +1,39 @@
+<ion-header>
+    <ion-toolbar>
+	    <ion-title>
+	      Rating
+	    </ion-title>
+	    <ion-buttons start>
+	      <button ion-button (click)="dismiss()">
+	        <span ion-text color="primary" showWhen="ios">Cancel</span>
+	        <ion-icon style="zoom:1.5; margin-top: -5px" color="light" name="md-close-circle" showWhen="android, windows"></ion-icon>
+	      </button>
+	    </ion-buttons>
+	</ion-toolbar>
+</ion-header>
+<ion-content padding class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <div class="form">
+    	<ionic3-star-rating
+	        activeIcon = "ios-star"
+	        defaultIcon = "ios-star-outline"
+	        activeColor = "#13DE81" 
+	        defaultColor = "#aaaaaa"
+	        readonly="false"
+	        rating="{{ratingValue}}"
+	        fontSize = "48px"
+	        (ratingChanged)="logRatingChange($event)">
+	    </ionic3-star-rating>
+		<ion-list>
+            <ion-item>
+                <ion-label floating>Add Review</ion-label>
+                <ion-textarea rows="5" [(ngModel)]="comment"></ion-textarea>
+            </ion-item>
+            <p style="color:white; letter-spacing: 1px">No abusive words are allowed and will not be tolerated as this is against company policy. It may also result in account ban!</p>
+            <br/>
+            <button large block ion-button (click)="saveRating()">SUBMIT</button>    			
+        </ion-list> 
+    </div>
+</ion-content>

@@ -1,0 +1,72 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>{{'book_an_apointment' | translate}}</ion-title>
+    </ion-navbar>
+
+    <ion-list no-lines>
+        <ion-item (click)="plumber_profile()">
+            <div class="img_box center_img" item-start>
+                <img src="{{details.upload_photo}}" class="invisible crop_img" (load)="onImageLoad($event.target)">
+            </div>
+            <h2 class="d-flex"><span>{{details.shop_name ? details.shop_name : details.name}}</span>
+                <ion-badge class="end">{{details.rating}} <ion-icon class="material-icons">star</ion-icon>
+                </ion-badge>
+            </h2>
+            <!-- <h3>Plumber</h3> -->
+            <p class="d-flex">{{details.subcategory}}<!-- <span class="end">$ 9.50 per Hour</span> --></p>
+        </ion-item>
+    </ion-list>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div> 
+    <ion-list no-lines class="select_address">
+        <h2 class="d-flex">{{'select_address' | translate}}</h2>
+        <ion-item>
+            <ion-label>Select Address</ion-label>
+            <ion-select (ionChange)="setAddress()" [(ngModel)]="select_address_type" placeholder="Select Address">
+                <ion-option *ngFor="let item of address" value="{{item.address_type}}">{{item.address_type}}</ion-option>
+            </ion-select>
+        </ion-item>
+        <p>{{select_address}}</p>
+    </ion-list>
+
+    <ion-list no-lines>
+        <h2 class="d-flex">{{'available_dates' | translate}} <!-- <span class="end">{{date | date:'MMM yyyy'}}</span> --></h2>
+        <!-- <ion-scroll scrollX="true" radio-group [(ngModel)]="service_date">
+            <ion-item *ngFor="let item of arrayOne(7); let i = index;">
+                <ion-label>
+                    <p>{{getDate(i) | date:'EEE'}}</p>
+                    <h3>{{getDate(i) | date:'dd'}}</h3>
+                </ion-label>
+                <ion-radio value="{{getDate(i) | date:'yyyy-MM-dd'}}"></ion-radio>
+            </ion-item>
+        </ion-scroll> -->
+        <ion-item>
+            <ion-input type="text" readonly (click)="openDatePicker()" [(ngModel)]="service_date"></ion-input>
+        </ion-item>
+    </ion-list>
+
+   <!--  <ion-list no-lines class="time">
+        <h2 class="d-flex">{{'available_time' | translate}}</h2>
+        <div class="radio_group" radio-group [(ngModel)]="service_time">
+            <ion-item>
+                <ion-label>
+                    <h3>Now</h3>
+                </ion-label>
+                <ion-radio value="now"></ion-radio>
+            </ion-item>
+            <ion-item *ngFor="let item of arrayOne(24); let i = index;">
+                <ion-label>
+                    <h3>{{getHour(i)}}</h3>
+                </ion-label>
+                <ion-radio disabled="{{checkDisabledTime(i)}}" value="{{1+i}}"></ion-radio>
+            </ion-item>
+        </div>
+    </ion-list> -->
+</ion-content>
+<ion-footer no-border>
+    <button ion-button full class="btn" (click)="book()"> {{'confirm' | translate}}</button>
+</ion-footer>

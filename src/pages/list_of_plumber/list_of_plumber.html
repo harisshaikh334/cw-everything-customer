@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>{{subcategory}} <!-- <span class="end">Bhathroom fittings</span> --></ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <ion-list no-lines>
+        <ion-item *ngFor="let data of providers; let i = index" (click)="plumber_profile(i)">
+            <div class="img_box center_img" item-start>
+                <img src="{{data.upload_photo ? data.upload_photo : 'assets/imgs/avatar.png'}}" class="crop_img">
+            </div>
+            <h2 class="d-flex"><span>{{data.shop_name ? data.shop_name : data.name}}</span>
+                <ion-badge class="end">{{data.rating}} <ion-icon class="material-icons">star</ion-icon>
+                </ion-badge>
+            </h2>
+            <!-- <h3>Plumber</h3> -->
+            <p class="d-flex">{{data.distance}} km away <!-- <span class="end">$ 9.50 per Hour</span> --></p>
+        </ion-item>
+
+        <div *ngIf="providers.length == 0 && showLoader == false" class="emptydata" align="center">
+            <img src="assets/imgs/sad_smiley.png" style="max-height: 150px" />
+            <h4>Currently none of the service providers are available around you for this service.</h4>
+        </div>
+    </ion-list>
+</ion-content>

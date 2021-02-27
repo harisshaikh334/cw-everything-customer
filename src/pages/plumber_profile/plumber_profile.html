@@ -1,0 +1,89 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title></ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-color">
+	<div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
+    <div class="banner">
+        <div class="d-flex profile">
+            <div class="profile_img center_img">
+                <img src="{{details.upload_photo ? details.upload_photo : 'assets/imgs/avatar.png'}}" class="crop_img">
+            </div>
+            <div class="profile_details">
+                <div class="text-box">
+                    <h2>{{details.distance}} km</h2>
+                    <h3>{{'away' | translate}}</h3>
+                </div>
+                <!--<div class="text-box">
+                    <h2>$9.50</h2>
+                    <h3>{{'per_hour' | translate}}</h3>
+                </div>-->
+                <div class="text-box">
+                    <h2>
+                        <ion-badge class="end">{{details.rating}} <ion-icon class="material-icons">star</ion-icon>
+                        </ion-badge> <small>({{ratings.count}})</small>
+                    </h2>
+                    <h3>{{'avg_rating' | translate}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="other_details">
+            <h2 class="d-flex">{{details.shop_name ? details.shop_name : details.name}}
+                <!-- <span class="end icon_box">
+                    <ion-icon class="material-icons">local_phone</ion-icon>
+                    <ion-icon class="material-icons">email</ion-icon>
+                </span> -->
+            </h2>
+            <!-- <h3> Plumber</h3> -->
+        </div>
+
+        <ion-segment [(ngModel)]="about_tab">
+            <ion-segment-button value="about">
+                Requirement
+            </ion-segment-button>
+            <ion-segment-button value="ratings">
+                {{'ratings' | translate}}
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+
+    <div class="tab_container" [ngSwitch]="about_tab">
+    	<form [formGroup]="orderForm">
+	        <ion-list no-lines *ngSwitchCase="'about'">
+	            <div class="text_box">
+	                <p>Please provide your detailed requirement to receive accurate quotation.</p>
+	                <br/>
+	            </div>
+	            <ion-item [class.invalid]="!orderForm.controls.requirement.valid && (orderForm.controls.requirement.dirty || submitAttempt)">
+				  <ion-textarea formControlName="requirement" rows="6" placeholder="Please type your requirement here..."></ion-textarea>
+				</ion-item>
+				<p class='error' *ngIf="!orderForm.controls.requirement.valid  && (orderForm.controls.requirement.dirty || submitAttempt)">Please enter your requirement.</p>
+
+				<div style="margin: 20px 0 10px 0">
+					<button ion-button class="button-md-dark" block (click)="openImageSelector()"><ion-icon class="material-icons">images</ion-icon> Upload Images (optional)</button>
+	                <ion-input multiple style="display:none" (change)="renderImages(event)" type="file" accept="image/*" id="requirement_images"></ion-input>
+				</div>
+				<div class="uploaded_images"></div>
+	        </ion-list>
+	    </form>
+
+        <ion-list no-lines *ngSwitchCase="'ratings'">
+            <ion-item *ngFor="let review of ratings.reviews">
+                <div class="img_box center_img" item-start>
+                    <img src="{{review.customer.profilepic}}" class="crop_img">
+                </div>
+                <h2 class="d-flex"><span>{{review.customer.name}}</span>
+                    <ion-badge class="end">{{review.rating}} <ion-icon class="material-icons">star</ion-icon>
+                    </ion-badge>
+                </h2>
+                <h3>{{review.subcategory}} | {{review.created_at}}</h3>
+                <p>{{review.comment}}</p>
+            </ion-item>
+        </ion-list>
+    </div>
+    <button ion-button full class="btn" (click)="request_quote()">Request Quotation</button>
+</ion-content>

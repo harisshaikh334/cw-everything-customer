@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>{{'my_address' | translate}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-img">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div> 
+    <ion-list no-lines>
+        <ion-item *ngFor="let data of addresses; let i = index;">
+            <ion-icon class="material-icons" item-start>location_on</ion-icon>
+            <h2 class="d-flex">{{data.address_type}}<ion-icon (click)="editAddress(i, data.id)" class="material-icons end">create</ion-icon>
+            </h2>
+            <p>{{data.address}}</p>
+        </ion-item>
+    </ion-list>
+</ion-content>
+<ion-footer no-border>
+       <button ion-button block (click)="addAddressModal()" class="btn"> {{'add_new_address' | translate}}</button>
+</ion-footer>
