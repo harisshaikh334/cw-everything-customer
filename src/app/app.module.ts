@@ -31,7 +31,7 @@ import { List_of_plumberPage } from '../pages/list_of_plumber/list_of_plumber';
 import { My_addressesPage } from '../pages/my_addresses/my_addresses';
 import { My_profilePage } from '../pages/my_profile/my_profile';
 import { NotificationPage } from '../pages/notification/notification';
-import { Plumber_profilePage } from '../pages/plumber_profile/plumber_profile';
+import { CartQuantity, Plumber_profilePage } from '../pages/plumber_profile/plumber_profile';
 import { ReviewPage } from '../pages/review/review';
 import { SigninPage } from '../pages/signin/signin';
 import { SignupPage } from '../pages/signup/signup';
@@ -48,6 +48,9 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera';
 import { Geolocation } from '@ionic-native/geolocation';
 import { StarRatingModule } from 'ionic3-star-rating';
+import { CartDetailsPage } from '../pages/cart-details/cart-details';
+import { OrderHostoryPage } from '../pages/order-hostory/order-hostory';
+import { OrderDetailsPage } from '../pages/order-details/order-details';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -81,6 +84,10 @@ export function createTranslateLoader(http: HttpClient) {
     TabsPage,
     AddAddressPage,
     OrderRatingPage,
+    CartDetailsPage,
+    CartQuantity,
+    OrderHostoryPage,
+    OrderDetailsPage,
     PopoverPage
   ],
   imports: [
@@ -126,6 +133,10 @@ export function createTranslateLoader(http: HttpClient) {
     TabsPage,
     AddAddressPage,
     OrderRatingPage,
+    CartDetailsPage,
+    CartQuantity,
+    OrderHostoryPage,
+    OrderDetailsPage,
     PopoverPage
   ],
   providers: [

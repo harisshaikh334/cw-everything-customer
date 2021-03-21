@@ -1,10 +1,39 @@
-page-plumber_profile {
 
+page-plumber_profile {
+    .add-qty-btn {
+        width: 100%;
+    }    
     .scroll-content {
         .btn {
             margin-bottom: 0!important;
         }
     }
+    .cart-btn {
+        float: right;
+        top: -100px;
+    }
+
+    .cart-qty {
+        display: flex;
+        flex-direction: column;
+        justify-content: right;
+        /* width: 120px; */
+        float: right;
+    }
+
+    .loader-bg{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+     }
+     ion-spinner {
+        width: 28px;
+        height: 28px;
+        stroke: #444;
+        fill: #222;
+     }   
+    
 
     .banner {
         padding: 0 13px;

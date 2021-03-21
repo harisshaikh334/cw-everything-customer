@@ -27,20 +27,36 @@ export class List_of_plumberPage {
 		this.subcategory = this.navparams.get('subcat');
 		this.storage.get('cuserinfo').then(result => {
 			this.user = JSON.parse(result);
-
+			let lat = 19.176667;
+			let long = 73.04222;
 			//getting co-ordinates
-			this.geolocation.getCurrentPosition().then(res => {
-				this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+res.coords.latitude+'&lng='+res.coords.longitude+'&access-token='+this.user.token)
+			if (window['cordova']) {
+				this.geolocation.getCurrentPosition().then(res => {
+					this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+res.coords.latitude+'&lng='+res.coords.longitude+'&access-token='+this.user.token)
+					.subscribe({
+						next: response => {
+							this.showLoader = false;
+							this.providers = response;
+						},
+						error: err => {
+						  console.error(err);
+						}
+					});
+				});
+			} else {
+				
+				
+				this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+lat+'&lng='+long+'&access-token='+this.user.token)
 				.subscribe({
-			        next: response => {
-			        	this.showLoader = false;
-			        	this.providers = response;
-			        },
-			        error: err => {
-			          console.error(err);
-			        }
-			    });
-			});
+					next: response => {
+						this.showLoader = false;
+						this.providers = response;
+					},
+					error: err => {
+						console.error(err);
+					}
+				});
+			}
 		});
 	}
 

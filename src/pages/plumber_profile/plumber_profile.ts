@@ -1,10 +1,71 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ActionSheetController, App, ToastController, Tabs } from 'ionic-angular';
+import { NavController, NavParams, ActionSheetController, App, ToastController, Tabs, Events, ViewController, PopoverController } from 'ionic-angular';
 import { APIURL } from '../../app/apiconfig';
 import { Storage } from '@ionic/storage';
 import { HttpClient } from '@angular/common/http';
 import{ Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+
+@Component({
+	template: `
+	<ion-card class="card-space">
+		<ion-item>
+		<ion-label stacked>Amount</ion-label> <!--I can use floating here but I prefer stacked-->
+			<ion-input type="tel" autofocus="true" [(ngModel)]="qty" placeholder="Enter Quantity">
+			</ion-input>
+		</ion-item>
+		<button style="width:100%;" class="add-qty-btn" (click)="addToCart()" ion-button>Add to trolley</button>
+	</ion-card>
+	`
+  })
+export class CartQuantity {
+	constructor(public viewCtrl: ViewController, public toastController: ToastController, public navParams:NavParams) {
+		this.qty = this.navParams.get('qty');
+		this.stock = this.navParams.get('stock');
+	}
+	qty: number = 0;
+	stock: number = 0;
+	close() {
+	  this.viewCtrl.dismiss(this.qty);
+	}
+	addToCart() {
+		// if (this.qty > 0 && !isNaN(this.qty)) {
+		// 	this.close();
+		// } else if (Number(this.qty) > Number(this.stock)) {
+			
+		// } else {
+		// 	const toast = this.toastController.create({
+		// 		message: 'Please enter valid quantity',
+		// 		duration: 2000,
+		// 		cssClass: 'toast-danger',
+		// 		position: 'bottom'
+		// 	  });
+		// 	  toast.present();
+		// }
+		if (this.qty == 0 || isNaN(this.qty)) {
+			const toast = this.toastController.create({
+			message: 'Please enter valid quantity',
+			duration: 2000,
+			cssClass: 'toast-danger',
+			position: 'bottom'
+			});
+			toast.present();
+			return false;
+		}
+		if (Number(this.qty) > Number(this.stock)) {
+			const toast = this.toastController.create({
+				message: 'total stock is only '+this.stock,
+				duration: 2000,
+				cssClass: 'toast-danger',
+				position: 'bottom'
+				});
+				toast.present();
+				return false;
+		}
+		this.close();
+	}
+  }
+  
 
 @Component({
   selector: 'page-plumber_profile',
@@ -20,19 +81,50 @@ export class Plumber_profilePage {
  	submitAttempt: boolean = false;	
  	orderForm: FormGroup;
  	uploadedFiles: any = [];
-	
-	constructor(public navCtrl: NavController, private app: App, public toastController: ToastController, public formBuilder: FormBuilder, private camera: Camera, public actionsheet: ActionSheetController, private http: HttpClient, public storage: Storage, private navparams: NavParams) {
+	product_list:any = [];
+	cart_count:number = 0;
+	showDesc: boolean = false;
+	productDesc: string  = '';
+	cart_list = [];
+	subcat_id:any;
+	disable_cart_btn: boolean = false;
+	constructor(public navCtrl: NavController,public popoverCtrl: PopoverController, private app: App, public toastController: ToastController, public formBuilder: FormBuilder, private camera: Camera, public actionsheet: ActionSheetController, private http: HttpClient, public storage: Storage, private navparams: NavParams, public events: Events) {
 
 	}
 
 	ngOnInit() {
+		
 		this.buildForm();
 	}
 
-	ionViewDidLoad(){
+	async ionViewDidLoad(){
+		this.subcat_id = this.navparams.get('subcat_id');
+		this.details = JSON.parse(this.navparams.get('obj'));
+		await this.storage.get('cart_list').then((data) => {
+			if (data) {
+				this.cart_list = data;
+				console.log('cart list ', this.cart_list);
+				if (this.cart_list.length > 0) {
+					console.log('details are ', this.cart_list[0], this.details.id, this.subcat_id);
+					if (this.cart_list[0]['sp_id'] == this.details.id && this.cart_list[0]['subcat_id'] == this.subcat_id) {
+						this.disable_cart_btn = false;
+					} else {
+						this.disable_cart_btn = true;
+					}
+				} else {
+					this.disable_cart_btn = false;
+				}
+			}
+			console.log('disable cart is ', this.disable_cart_btn);
+		})
 		this.storage.get('cuserinfo').then(result => {
 			this.user = JSON.parse(result);
-			this.details = JSON.parse(this.navparams.get('obj'));
+			this.details.is_product = 1;
+			
+			if (this.details.is_product == 1) {
+				this.about_tab = "product";
+				this.getProductList();
+			}
 			this.showLoader = true;
 			this.http.get(APIURL+'reviews/ratings?id='+this.details.id+'&access-token='+this.user.token)
 			.subscribe({
@@ -45,6 +137,220 @@ export class Plumber_profilePage {
 		          	console.error(err);
 		        }
 		    });
+		});
+	}
+
+	getProductList() {
+		// let url ="https://everythingservices.in/admin14/capi/v1/customers/product-list?sp_id=777&access-token=wVHYUA5wHPgAgrRBg9z6Ut_2C_8PX9cX";
+		let url = APIURL+'customers/product-list?sp_id='+this.details.id+'&access-token='+this.user.token
+		this.http.get(url)
+			.subscribe({
+		        next: (response:any) => {
+		        	this.showLoader = false;
+					response.forEach(element => {
+						element['added_in_cart'] = false;
+						element['cart_details'] = {};
+						let index = this.cart_list.findIndex((item) => {
+							return item.product_name == element.name;
+						});
+						if (index != -1) {
+							element['added_in_cart'] = true;
+							element['cart_details'] = this.cart_list[index];
+						}
+					});
+					
+		        	this.product_list = response;
+		        },
+		        error: err => {
+		        	this.showLoader = false;
+		          	console.error(err);
+		        }
+		});
+	}
+
+	openDesc(prod) {
+		this.productDesc = prod.description;
+		this.showDesc = true;
+	}
+
+	closeDesc() {
+		this.productDesc = '';
+		this.showDesc = false;
+	}
+
+	addCart(item) {
+		let popover = this.popoverCtrl.create(CartQuantity, {stock: item.stock, edit: false});
+		popover.present({
+			ev: 0
+		});
+		popover.onDidDismiss((data) => {
+			if (!data) {
+				return false;
+			}
+			let url = APIURL + "customers/cartcreate?access-token="+ this.user.token;
+			let cart_obj = {
+				customer_id: this.user.id,
+				product_id: item.id,
+				unit: item.unit,
+				qty:data,
+				mrp: item.mrp,
+				sp_id: this.details.id,
+				subcat_id: this.navparams.get('subcat_id'),
+				sale_price: item.sale_price
+			};
+			this.showLoader = true;
+			this.http.post(url, cart_obj)
+			.subscribe({
+		        next: (response:any) => {
+		        	this.showLoader = false;
+					if (response.error != 1) {
+						item['added_in_cart'] = true;
+						item['cart_details'] = response;
+						const toast = this.toastController.create({
+							message: 'Product added in trolly.',
+							duration: 2000,
+							cssClass: 'success',
+							position: 'bottom'
+						});
+						toast.present();
+						this.getCartCount();
+						this.getCartList();
+					} else {
+						const toast = this.toastController.create({
+							message: response.reason,
+							duration: 2000,
+							cssClass: 'toast-danger',
+							position: 'bottom'
+						});
+						toast.present();
+					}
+					
+		        },
+		        error: err => {
+		        	this.showLoader = false;
+					const toast = this.toastController.create({
+						message: 'Something went wrong.',
+						duration: 2000,
+						cssClass: 'toast-danger',
+						position: 'bottom'
+					});
+					toast.present();
+		        }
+		});
+        
+		})
+	}
+
+	editQty(item) {
+		let popover = this.popoverCtrl.create(CartQuantity, {qty: item.cart_details.qty, stock: item.stock, edit: true});
+		popover.present({
+			ev: item.cart_details.qty
+		});
+		popover.onDidDismiss((data) => {
+			// console.log('data is ', data);
+			if (data) {
+				let url = APIURL +"customers/cartupdate?access-token="+this.user.token+"&customer_id="+this.user.id;
+				let cart_obj ={
+					cart_id: item.cart_details.id,
+					product_id: item.cart_details.product_id,
+					unit: item.cart_details.unit,
+					qty: item.cart_details.qty,
+					mrp: item.cart_details.mrp,
+					sale_price: item.cart_details.sale_price
+				};
+				this.showLoader = true;
+				this.http.post(url, cart_obj)
+				.subscribe({
+					next: (response:any) => {
+						this.showLoader = false;
+						if (response.error != 1) {
+							item.cart_details.qty = data;
+							const toast = this.toastController.create({
+								message: 'Quantity updated in trolly.',
+								duration: 2000,
+								cssClass: 'success',
+								position: 'bottom'
+							});
+							toast.present();
+							this.getCartCount();
+							this.getCartList();
+						} else {
+							const toast = this.toastController.create({
+								message: response.reason,
+								duration: 2000,
+								cssClass: 'toast-danger',
+								position: 'bottom'
+							});
+							toast.present();
+						}
+						
+					},
+					error: err => {
+						this.showLoader = false;
+						const toast = this.toastController.create({
+							message: 'Something went wrong.',
+							duration: 2000,
+							cssClass: 'toast-danger',
+							position: 'bottom'
+						});
+						toast.present();
+					}
+			});
+			}
+		})
+	}
+
+	removeFromCart(item) {
+		let url = APIURL + "customers/del-cart?access-token="+ this.user.token+"&cart_id="+item['cart_details']['id'];
+		this.showLoader = true;
+		this.http.get(url)
+			.subscribe({
+		        next: response => {
+		        	this.showLoader = false;
+					item['added_in_cart'] = false;
+					item['cart_details'] = {};
+		        	this.getCartCount();
+					this.getCartList();
+		        },
+		        error: err => {
+		        	this.showLoader = false;
+		          	console.error(err);
+		        }
+		});
+	}
+
+	getCartCount() {
+		let url = APIURL +"customers/cart-count?customer_id="+this.user.id+"&access-token="+ this.user.token;
+		this.showLoader = true;
+		
+		this.http.get(url)
+			.subscribe({
+		        next: response => {
+		        	this.showLoader = false;
+		        	this.events.publish('add_to_cart', response['cart_count']);
+		        },
+		        error: err => {
+		        	this.showLoader = false;
+		          	console.error(err);
+		        }
+		});
+	}
+
+	getCartList() {
+		let url =APIURL +"customers/cart-list?customer_id="+this.user.id+"&access-token="+ this.user.token;
+		
+		this.http.get(url)
+			.subscribe({
+		        next: (response:any) => {
+					response.forEach(element => {
+						element['id'] = element['cart_id']
+					});
+		        	this.storage.set('cart_list', response);
+		        },
+		        error: err => {
+		        	this.showLoader = false;
+		          	console.error(err);
+		        }
 		});
 	}
 
@@ -155,7 +461,7 @@ export class Plumber_profilePage {
 
  		let formData = new FormData();
  		for (var i = 0; i < this.uploadedFiles.length; i++) {
- 			console.log(this.uploadedFiles[i].length)
+ 			console.log('length is',this.uploadedFiles[i].length)
 	    	formData.append('file[]', this.uploadedFiles[i]);
 	    }
  		formData.append('requirement', this.orderForm.value['requirement']);
@@ -163,6 +469,7 @@ export class Plumber_profilePage {
  		formData.append('customer_id', this.user.id);
  		formData.append('sp_id', this.details.id);
 
+		console.log('form data is ', formData);
 	    this.showLoader = true;
 	    this.http.post<any>(APIURL+'orders?access-token='+this.user.token, formData)
 	    .subscribe({

@@ -42,6 +42,9 @@
         </div>
 
         <ion-segment [(ngModel)]="about_tab">
+            <ion-segment-button [hidden]="details.is_product == 0" value="product">
+                Products
+            </ion-segment-button>
             <ion-segment-button value="about">
                 Requirement
             </ion-segment-button>
@@ -49,6 +52,35 @@
                 {{'ratings' | translate}}
             </ion-segment-button>
         </ion-segment>
+    </div>
+
+    <div class="tab_container" [ngSwitch]="about_tab">
+        <ion-list no-lines *ngSwitchCase="'product'">
+            <ion-item *ngFor="let data of product_list; let i = index">
+                <div class="img_box center_img" item-start>
+                    <img src="{{data.image ? data.image : 'assets/imgs/avatar.png'}}" class="crop_img">
+                </div>
+                <h2 class="d-flex"><span>{{data.name }}</span>
+                </h2>
+                <!-- <h3>Plumber</h3> -->
+                <h3 class="d-flex">Sale Price : {{data.sale_price}} <s *ngIf="(data.mrp > data.sale_price)" style='color:red;margin-left: 5px;'> {{data.mrp}}</s></h3>
+                <!-- <h3 *ngIf="!(data.mrp > data.sale_price)" class="d-flex">MRP Price : {{data.mrp}}</h3> -->
+                <!-- <h3  class="d-flex"></h3> -->
+                <h3 *ngIf="data?.cart_details?.qty" class="d-flex">Quantity {{data?.cart_details?.qty}}</h3>
+                <h3 class="d-flex">Total Unit Price {{data.unit_value}}</h3>
+                <button [disabled]="disable_cart_btn || data.stock ==0" *ngIf="!data?.added_in_cart" (click)="addCart(data)" class="d-flex" ion-button><ion-icon class="material-icons" item-end>shopping_cart</ion-icon>Add to trolley</button>
+                <button [disabled]="disable_cart_btn || data.stock ==0" *ngIf="data?.added_in_cart" (click)="editQty(data)" class="d-flex" ion-button><ion-icon class="material-icons" item-end>shopping_cart</ion-icon>Edit Qty</button>
+                <button [disabled]="disable_cart_btn || data.stock ==0" *ngIf="data?.added_in_cart" (click)="removeFromCart(data)" class="d-flex" ion-button><ion-icon class="material-icons" item-end>remove_shopping_cart</ion-icon>Remove</button>
+                <div class="cart-qty">
+                    <button ion-button (click)="openDesc(data)"  class="d-flex cart-btn">Description</button>
+                 </div>
+            </ion-item>
+    
+            <div *ngIf="product_list.length == 0" class="emptydata" align="center">
+                <img src="assets/imgs/sad_smiley.png" style="max-height: 150px" />
+                <h4>Currently there are no products.</h4>
+            </div>
+        </ion-list>
     </div>
 
     <div class="tab_container" [ngSwitch]="about_tab">
@@ -85,5 +117,18 @@
             </ion-item>
         </ion-list>
     </div>
-    <button ion-button full class="btn" (click)="request_quote()">Request Quotation</button>
+    <button *ngIf="about_tab != 'product'" ion-button full class="btn" (click)="request_quote()">Request Quotation</button>
 </ion-content>
+<div *ngIf="showDesc" class="modal-pop">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <!-- <h2>{{popHeading}}</h2> -->
+            <button class="close-btn" (click)="closeDesc()"> &#10006;</button>
+        </div>
+        <div class="modal-body">
+            <p [innerHTML]="productDesc">
+            </p>
+            <!-- <img [src]="popup_image" [title]="popHeading" [alt]="popHeading" /> -->
+        </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, App, Platform, AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { HttpClient } from '@angular/common/http';
-import { APIURL } from '../../app/apiconfig';
+import { APIURL, IMAGE_URL } from '../../app/apiconfig';
 import { SocialSharing } from '@ionic-native/social-sharing';
 
 import {My_profilePage } from '../my_profile/my_profile';
@@ -11,6 +11,7 @@ import {AboutPage } from '../about/about';
 import {FaqPage } from '../faq/faq';
 import {SigninPage} from '../signin/signin';
 import {My_addressesPage } from '../my_addresses/my_addresses';
+import { OrderHostoryPage } from '../order-hostory/order-hostory';
 
 
 @Component({
@@ -23,6 +24,7 @@ export class AccountPage {
   public user: any = {};
   public showLoader: boolean = false;
   public watch: any = null;
+  profile_picture: string = '';
 
   constructor(public navCtrl: NavController, private socialSharing: SocialSharing, public alertCtrl: AlertController, public platform: Platform, private http: HttpClient, public storage: Storage, private app: App) {
 
@@ -31,6 +33,7 @@ export class AccountPage {
   ionViewDidEnter(){
     this.storage.get('cuserinfo').then(result => {
       this.user = JSON.parse(result);
+      this.profile_picture = IMAGE_URL + this.user['profile_picture'];
     });
   }
   my_addresses(){
@@ -39,6 +42,9 @@ export class AccountPage {
   my_profile(){
     this.navCtrl.push(My_profilePage)
   }   
+  my_order_history() {
+    this.navCtrl.push(OrderHostoryPage)
+  }
   contact(){
     this.navCtrl.push(ContactPage)
   }

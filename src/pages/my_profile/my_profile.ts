@@ -1,10 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, ToastController, ActionSheetController } from 'ionic-angular';
 import { HttpClient } from '@angular/common/http';
-import { APIURL } from '../../app/apiconfig';
+import { APIURL, IMAGE_URL } from '../../app/apiconfig';
 import { Storage } from '@ionic/storage';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { NgModel } from '@angular/forms';
+import { HomePage } from '../home/home';
+import { TabsPage } from '../tabs/tabs';
 
 @Component({
   selector: 'page-my_profile',
@@ -23,12 +25,14 @@ export class My_profilePage {
 	@ViewChild('mobile') mobile: NgModel;
 	@ViewChild('email') email: NgModel;
 	@ViewChild('address') address: NgModel;
+	@ViewChild('gender') gender: NgModel;
 	email_regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	profile = {
 		name: '',
 		mobile: '',
 		email: '',
-		address: ''
+		address: '',
+		gender: ''
 	}
 	constructor(private http: HttpClient, public camera: Camera, public actionsheet: ActionSheetController, public storage: Storage, public navCtrl: NavController, public toastController: ToastController) {
 
@@ -42,7 +46,8 @@ export class My_profilePage {
 		  this.profile.mobile  = this.user.contact;
 		  this.profile.email = this.user.email;
 		  this.profile.address = this.user.address;
-		  this.profile_picture = this.user.profile_picture;
+		  this.profile_picture = IMAGE_URL+ this.user.profile_picture;
+		  this.profile.gender = this.user.gender;
 		});
 	}
 
@@ -71,7 +76,7 @@ export class My_profilePage {
   						next: response => {
   							this.storage.remove('cuserinfo');
   							const userinfo = this.user;
-  							userinfo['profile_picture'] = response.profile_picture;
+  							userinfo['profile_picture'] = IMAGE_URL + response.profile_picture;
   							this.storage.set('cuserinfo', JSON.stringify(userinfo));
   						},
   						error: err => {
@@ -105,7 +110,7 @@ export class My_profilePage {
   						next: response => {
   							this.storage.remove('cuserinfo');
   							const userinfo = this.user;
-  							userinfo['profile_picture'] = response.profile_picture;
+  							userinfo['profile_picture'] = IMAGE_URL + response.profile_picture;
   							this.storage.set('cuserinfo', JSON.stringify(userinfo));
   						},
   						error: err => {
@@ -126,7 +131,57 @@ export class My_profilePage {
 	}
 
 	updateProfile() {
-		if (this.name.valid && this.mobile.valid && this.email.valid && this.address.valid) {
+		if (this.name.valid && this.mobile.valid && this.email.valid && this.address.valid && this.gender.valid) {
+			let profileObj = {
+				id:this.user['id'],
+				name: this.profile.name,
+				email: this.profile.email,
+				contact: this.profile.mobile,
+				address:this.profile.address,
+				gender: this.profile.gender
+			};
+			this.showLoader = true;
+			this.http.post<any>(APIURL+'customers/update-profile', profileObj)
+			.subscribe({
+				next: response => {
+					this.showLoader = false;
+					if(response.error == 1){
+						const toast = this.toastController.create({
+					      message: response.reason,
+					      duration: 4000,
+					      cssClass: 'toast-danger',
+					      position: 'top'
+					    });
+					    toast.present();
+					} else {
+						const toast = this.toastController.create({
+					      message: 'Profile updated successfully.',
+					      duration: 4000,
+					      cssClass: 'toast-success',
+					      position: 'top'
+					    });
+						this.user['address'] = this.profile.address;
+						this.user['name'] = this.profile.name;
+						this.user['contact'] = this.profile.mobile;
+						this.user['email'] = this.profile.email;
+						this.user['address'] = this.profile.address;
+						this.user['gender'] = this.profile.gender;
+						this.storage.set('cuserinfo', JSON.stringify(this.user));
+					    this.navCtrl.setRoot(TabsPage);
+					}
+					
+				},
+				error: err => {
+					this.showLoader = false;
+					const toast = this.toastController.create({
+				      message: err.message,
+				      duration: 4000,
+				      cssClass: 'toast-danger',
+				      position: 'top'
+				    });
+				    toast.present();
+				}
+			})
 
 		} else {
 			alert('Please enter valid information.');

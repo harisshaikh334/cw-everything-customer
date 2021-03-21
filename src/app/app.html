@@ -1,1 +1,5 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-nav #nav [root]="rootPage"></ion-nav>
+<ion-fab style="top:50px" right top *ngIf="cart_count_number > 0">
+    <button (click)="goToCartDetails()" ion-fab><ion-icon class="material-icons" item-end>shopping_cart</ion-icon>{{cart_count_number}}</button>
+</ion-fab>
+ 

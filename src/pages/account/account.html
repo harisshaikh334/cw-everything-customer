@@ -6,7 +6,7 @@
     </ion-navbar>
     <div class="profile d-flex">
         <div class="profile_img center_img">
-            <img onload="this.classList.remove('loading')" onerror="this.onerror=null;this.src='assets/imgs/avatar.png';" src="{{ user.profile_picture != '' ? user.profile_picture : 'assets/imgs/avatar.png'}}" class="crop_img loading">
+            <img onload="this.classList.remove('loading')" onerror="this.onerror=null;this.src='assets/imgs/avatar.png';" src="{{ profile_picture != '' ? profile_picture : 'assets/imgs/avatar.png'}}" class="crop_img loading">
         </div>
         <div class="profile_details">
             <h2>{{user.name}}</h2>
@@ -23,6 +23,10 @@
         <ion-item (click)="my_profile()">
             <ion-icon class="material-icons" item-start>account_circle</ion-icon>
             <h2>My Profile</h2>
+        </ion-item>
+        <ion-item (click)="my_order_history()">
+            <ion-icon class="material-icons" item-start>shopping_cart</ion-icon>
+            <h2>My Order History</h2>
         </ion-item>
         <ion-item (click)="my_addresses()">
             <ion-icon class="material-icons" item-start>location_on</ion-icon>

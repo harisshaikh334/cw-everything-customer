@@ -67,7 +67,7 @@ export class AppointmentsPage {
 
   	loadOrders = () => {
 		this.showLoader = true;
-		this.http.get<any>(APIURL+'orders?access-token='+this.user.token+'&where[customer_id]='+this.user.id)
+		this.http.get<any>(APIURL+'orders?access-token='+this.user.token+'&where[customer_id]='+this.user.id+"&where[is_product]=0")
 		.subscribe({
 			next: data => {
 				this.showLoader = false;

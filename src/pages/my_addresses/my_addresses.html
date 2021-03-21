@@ -9,14 +9,15 @@
         <ion-spinner class="spinner" color="light"></ion-spinner>
     </div> 
     <ion-list no-lines>
-        <ion-item *ngFor="let data of addresses; let i = index;">
+        <ion-item *ngFor="let data of addresses; let i = index;" class="sel_address" [ngStyle]="{'background': (data.id==selected_address?.id) ? '#0B5345' : ''}">
             <ion-icon class="material-icons" item-start>location_on</ion-icon>
             <h2 class="d-flex">{{data.address_type}}<ion-icon (click)="editAddress(i, data.id)" class="material-icons end">create</ion-icon>
             </h2>
-            <p>{{data.address}}</p>
+            <p (click)="selectAddress(data)">{{data.address}}</p>
         </ion-item>
     </ion-list>
 </ion-content>
 <ion-footer no-border>
        <button ion-button block (click)="addAddressModal()" class="btn"> {{'add_new_address' | translate}}</button>
+       <button *ngIf="params?.page == 'cart_details'" ion-button block (click)="placeOrder()" class="btn"> {{'Place Order' | translate}}</button>
 </ion-footer>

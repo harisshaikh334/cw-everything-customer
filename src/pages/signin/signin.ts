@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController, Platform } from 'ionic-angular';
+import { NavController, ToastController, Platform, Events } from 'ionic-angular';
 import{ Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
@@ -25,7 +25,7 @@ export class SigninPage {
 
 	firebasePlugin;
 	
-	constructor(public navCtrl: NavController, private platform: Platform, public formBuilder: FormBuilder, private http: HttpClient, public toastController: ToastController, public storage: Storage) {
+	constructor(public navCtrl: NavController,public events:Events, private platform: Platform, public formBuilder: FormBuilder, private http: HttpClient, public toastController: ToastController, public storage: Storage) {
 		
 		this.loginForm = formBuilder.group({
 			mobile: ['', Validators.compose([
@@ -42,8 +42,9 @@ export class SigninPage {
 	        this.storage.get('cuserinfo').then(result => {
 	        	this.showLoader = false;
 	        	if(typeof result != 'undefined' && result !== null && result !== ''){
+					let user = JSON.parse(result);
 	        		if(this.platform.is('cordova')){
-			        	let user = JSON.parse(result);
+			        	
 			        	this.firebasePlugin.onTokenRefresh((token: string) => {
 							this.push_token = token;
 							this.http.put<any>(APIURL+'customers/'+user.id+'?access-token='+user.token, {push_token: token})
@@ -56,7 +57,9 @@ export class SigninPage {
 						});
 			        }
 
-		        	this.navCtrl.setRoot(TabsPage)
+		        	this.navCtrl.setRoot(TabsPage);
+					this.getCartList(user);
+					this.getCartCount(user);
 		        }
 	        });
         
@@ -69,6 +72,39 @@ export class SigninPage {
 			}
 	    });
     }
+
+	getCartList(user) {
+		
+		let url =APIURL +"customers/cart-list?customer_id="+user.id+"&access-token="+ user.token;
+		this.http.get(url)
+			.subscribe({
+		        next: (response:any) => {
+					this.storage.remove('cart_list');
+					response.forEach(element => {
+						element['id'] = element['cart_id']
+					});
+		        	this.storage.set('cart_list', response);
+		        },
+		        error: err => {
+		          	console.error(err);
+		        }
+		});
+
+	}
+
+	getCartCount(user) {
+		let url = APIURL +"customers/cart-count?customer_id="+user.id+"&access-token="+ user.token;
+		
+		this.http.get(url)
+			.subscribe({
+		        next: response => {
+		        	this.events.publish('add_to_cart', response['cart_count']);
+		        },
+		        error: err => {
+		          	console.error(err);
+		        }
+		});
+	}
 
     /*onMessageReceived(message){
       if (message.tap) { 

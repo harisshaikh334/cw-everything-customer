@@ -42,6 +42,15 @@
                     <ion-label floating>{{'Address' | translate}}</ion-label>
                     <ion-input type="text" [(ngModel)]="profile.address" name="address" #address="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" required maxlength="200"></ion-input>
                 </ion-item>
+                <ion-item>
+                    <ion-icon class="material-icons" item-start>wc</ion-icon>
+                    <ion-label>Gender</ion-label>
+                    <ion-select [(ngModel)]="profile.gender" #gender="ngModel" required="true" [ngModelOptions]="{standalone: true}">
+                         <ion-option value="male">Male</ion-option>
+                         <ion-option value="female">Female</ion-option>
+                         <ion-option value="other">Other</ion-option>
+                    </ion-select>
+                </ion-item>
                 <p class='error' *ngIf="!address.valid  && address.touched">Please enter valid address.</p>
                 <button block ion-button (click)="updateProfile(profileForm)">Update Profile</button>   
             </ion-list>
