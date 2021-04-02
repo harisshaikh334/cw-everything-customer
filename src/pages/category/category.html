@@ -16,8 +16,8 @@
             <h2 class="d-flex"><span>{{data.name}}</span>
                 <ion-icon class="material-icons end">keyboard_arrow_right</ion-icon>
             </h2>
-            <p *ngIf="data.min_order_amt > 0">Minimum Order - ₹{{data.min_order_amt}}</p>
-            <p *ngIf="data.min_order_amt == 0 && data.visiting_charge > 0">Visiting Charge - ₹{{data.visiting_charge}}</p>
+            <p *ngIf="data.min_order_amt > 0">{{"Minimum Order" | translate}} - ₹{{data.min_order_amt}}</p>
+            <p *ngIf="data.min_order_amt == 0 && data.visiting_charge > 0">{{"Visiting Charge" | translate}} - ₹{{data.visiting_charge}}</p>
         </ion-item>
     </ion-list>
 </ion-content>

@@ -1,6 +1,6 @@
 <ion-header>
     <ion-navbar>
-        <ion-title>{{'book_an_apointment' | translate}}</ion-title>
+        <ion-title>{{'Book an Appointment' | translate}}</ion-title>
     </ion-navbar>
 
     <ion-list no-lines>
@@ -9,7 +9,7 @@
                 <img src="{{details.upload_photo}}" class="invisible crop_img" (load)="onImageLoad($event.target)">
             </div>
             <h2 class="d-flex"><span>{{details.shop_name ? details.shop_name : details.name}}</span>
-                <ion-badge class="end">{{details.rating}} <ion-icon class="material-icons">star</ion-icon>
+                <ion-badge class="end">{{details.rating}} <ion-icon class="material-icons">{{"Star" | translate}}</ion-icon>
                 </ion-badge>
             </h2>
             <!-- <h3>Plumber</h3> -->
@@ -23,18 +23,18 @@
         <ion-spinner class="spinner" color="light"></ion-spinner>
     </div> 
     <ion-list no-lines class="select_address">
-        <h2 class="d-flex">{{'select_address' | translate}}</h2>
+        <h2 class="d-flex">{{'Select Address' | translate}}</h2>
         <ion-item>
-            <ion-label>Select Address</ion-label>
-            <ion-select (ionChange)="setAddress()" [(ngModel)]="select_address_type" placeholder="Select Address">
+            <ion-label>{{"Select Address" | translate}}</ion-label>
+            <ion-select (ionChange)="setAddress()" [(ngModel)]="select_address_type" placeholder="{{'Select Address' | translate}}">
                 <ion-option *ngFor="let item of address" value="{{item.address_type}}">{{item.address_type}}</ion-option>
             </ion-select>
         </ion-item>
-        <p>{{select_address}}</p>
+        <p>{{"Select Address" | translate}}</p>
     </ion-list>
 
     <ion-list no-lines>
-        <h2 class="d-flex">{{'available_dates' | translate}} <!-- <span class="end">{{date | date:'MMM yyyy'}}</span> --></h2>
+        <h2 class="d-flex">{{'Available Dates' | translate}} <!-- <span class="end">{{date | date:'MMM yyyy'}}</span> --></h2>
         <!-- <ion-scroll scrollX="true" radio-group [(ngModel)]="service_date">
             <ion-item *ngFor="let item of arrayOne(7); let i = index;">
                 <ion-label>
@@ -68,5 +68,5 @@
     </ion-list> -->
 </ion-content>
 <ion-footer no-border>
-    <button ion-button full class="btn" (click)="book()"> {{'confirm' | translate}}</button>
+    <button ion-button full class="btn" (click)="book()"> {{'Confirm' | translate}}</button>
 </ion-footer>

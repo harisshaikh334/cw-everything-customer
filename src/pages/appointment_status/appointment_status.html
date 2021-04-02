@@ -1,6 +1,6 @@
 <ion-header>
     <ion-navbar>
-        <ion-title><span>Order Status - {{order.status}}</span></ion-title>
+        <ion-title><span>{{"Order Status" | translate}} - {{order.status}}</span></ion-title>
     </ion-navbar>
 </ion-header>
 
@@ -14,35 +14,35 @@
                 <div class="status d-flex active">
                     <h2>1</h2>
                     <div class="status_details">
-                        <h3>Awaiting Quotation</h3>
+                        <h3>{{"Awaiting Quotation" | translate}}</h3>
                         <p>{{order.created_at | date:'MMM d, y, h:mm a'}}</p>
                     </div>
                 </div>
                 <div class="status d-flex" *ngIf="order.status == 'Pending'">
                     <h2>2</h2>
                     <div class="status_details">
-                        <h3>Accept / Reject</h3>
+                        <h3>{{"Accept / Reject" | translate}}</h3>
                         <p>{{order.quotation_date != null ? (order.quotation_date | date:'MMM d, y, h:mm a') : '-'}}</p>
                     </div>
                 </div>
                 <div *ngIf="order.status != 'Pending'" class="status d-flex {{['','Quoted','Scheduled','Complete'].indexOf(order.status) ? 'active' : ''}}">
                     <h2>2</h2>
                     <div class="status_details">
-                        <h3>Quotation Received</h3>
+                        <h3>{{"Quotation Received" | translate}}</h3>
                         <p>{{order.quotation_date != null ? (order.quotation_date | date:'MMM d, y, h:mm a') : '-'}}</p>
                     </div>
                 </div>
                 <div class="status d-flex {{order.status == 'Scheduled' || order.status == 'Complete'  ? 'active' : ''}}">
                     <h2>3</h2>
                     <div class="status_details">
-                        <h3>Scheduled</h3>
+                        <h3>{{"Scheduled" | translate}}</h3>
                         <p>{{order.service_schedule != null ? (order.service_schedule | date:'MMM d, y, h:mm a') : '-'}}</p>
                     </div>
                 </div>
                 <div class="status d-flex {{'Complete' == order.status ? 'active' : ''}}">
                     <h2>4</h2>
                     <div class="status_details">
-                        <h3>{{'finished' | translate}}</h3>
+                        <h3>{{'Finished' | translate}}</h3>
                         <p>{{'Complete' == order.status ? (order.service_schedule | date:'MMM d, y, h:mm a') : '-'}}</p>
                     </div>
                 </div>
@@ -54,19 +54,19 @@
                 <div class="d-flex" style="flex-direction: column;">
 
                     <button *ngIf="order.status == 'Quoted'" (click)="approve()" ion-button block icon-start class="btn">
-                        <ion-icon name="checkmark"></ion-icon> ACCEPT
+                        <ion-icon name="checkmark"></ion-icon> {{"Accept" | translate}}
                     </button>
                     <button *ngIf="order.status == 'Quoted'" (click)="reject()" ion-button block icon-start class="btn danger">
-                        <ion-icon name="close"></ion-icon> REJECT
+                        <ion-icon name="close"></ion-icon> {{"Reject" | translate}}
                     </button>
 
-                    <button *ngIf="order.status == 'Pending'" (click)="cancelOrder()" ion-button block class="btn">CANCEL ORDER</button>
+                    <button *ngIf="order.status == 'Pending'" (click)="cancelOrder()" ion-button block class="btn">{{"Cancel order" | translate}}</button>
 
-                    <a class="btn" button ion-button icon-start href="tel:{{provider.contact}}" *ngIf="order.status == 'Scheduled' && order.quotation_approved == 'Y'"><ion-icon name="call"></ion-icon> CALL</a>
+                    <a class="btn" button ion-button icon-start href="tel:{{provider.contact}}" *ngIf="order.status == 'Scheduled' && order.quotation_approved == 'Y'"><ion-icon name="call"></ion-icon> {{"Call" | translate}}</a>
 
-                    <button *ngIf="order.status == 'Complete' && unpaid" (click)="openSelect()" ion-button block class="btn">MAKE PAYMENT</button>
+                    <button *ngIf="order.status == 'Complete' && unpaid" (click)="openSelect()" ion-button block class="btn">{{"Make Payment" | translate}}</button>
 
-                    <a *ngIf="order.status != 'Complete'" class="btn" button ion-button icon-start href="tel:+91 864 209 3333"><ion-icon name="call"></ion-icon> HELPLINE</a>
+                    <a *ngIf="order.status != 'Complete'" class="btn" button ion-button icon-start href="tel:+91 864 209 3333"><ion-icon name="call"></ion-icon> {{"Helpline" | translate}}</a>
 
                     <img *ngIf="!unpaid && order.status == 'Complete'" style="max-height: 100px; margin: auto" src="../assets/imgs/paid.png" />
                 </div>
@@ -74,18 +74,18 @@
 
             <!-- payment options -->
             <ion-item hidden>
-                <ion-label>Payment Mode</ion-label>
+                <ion-label>{{"Payment Mode" | translate}}</ion-label>
                 <ion-select id="paymentMode" (ionChange)="pay()" [(ngModel)]="paymentMode">
-                     <ion-option value="Online">Online</ion-option>
-                     <ion-option value="Cash">Cash</ion-option>
+                     <ion-option value="Online">{{"Online"  | translate}}</ion-option>
+                     <ion-option value="Cash">{{"Cash" | translate}}</ion-option>
                 </ion-select>
             </ion-item>    
             <!-- payment options -->
             <ion-item hidden>
-                <ion-label>What are you paying for?</ion-label>
+                <ion-label>{{"What are you paying for?" | translate}}</ion-label>
                 <ion-select id="paymentMode" (ionChange)="processPayment()" [(ngModel)]="paymentType">
-                     <ion-option value="service_charge" selected>Service Charge - {{order.quotation | currency: "₹"}}</ion-option>
-                     <ion-option value="visiting_charge" selected>Visiting Charge - {{subcat.visiting_charge | currency: "₹"}}</ion-option>
+                     <ion-option value="service_charge" selected>{{"Service Charge" | translate}} - {{order.quotation | currency: "₹"}}</ion-option>
+                     <ion-option value="visiting_charge" selected>{{"Visiting Charge" | translate}} - {{subcat.visiting_charge | currency: "₹"}}</ion-option>
                 </ion-select>
             </ion-item>    
 
@@ -100,37 +100,37 @@
                 </div>
                 <h2 class="d-flex">{{provider.name}}</h2>
                 <div class="text-box">
-                    <h3>{{'job_task' | translate}}</h3>
+                    <h3>{{'Job Task' | translate}}</h3>
                     <h4>{{subcat.name}}</h4>
                 </div>
                 <ion-row>
                     <ion-col col-6>
                         <div class="text-box">
-                            <h3>{{'job_date' | translate}}</h3>
+                            <h3>{{'Job Date' | translate}}</h3>
                             <h4>{{order.created_at | date:'MMM d, y, h:mm a'}}</h4>
                         </div>
                     </ion-col>
                     <ion-col col-6 *ngIf="['Quoted','Scheduled','Complete'].indexOf(order.status) != -1">
                         <div class="text-box">
-                            <h3>{{'job_cost' | translate}}</h3>
+                            <h3>{{'Job Cost' | translate}}</h3>
                             <h4><b>{{'₹'+order.quotation}}</b></h4>
                         </div>
                     </ion-col>
                 </ion-row>
                 <div class="text-box" *ngIf="order.quotation_note">
-                    <h3>Quotation Note</h3>
+                    <h3>{{"Quotation Note" | translate}}</h3>
                     <h4>{{order.quotation_note}}</h4>
                 </div>
                 <div class="text-box">
-                    <h3>Job Details</h3>
+                    <h3>{{"Job Details" | translate}}</h3>
                     <h4>{{order.requirement}}</h4>
                 </div>
                 <div *ngIf="order.status == 'Rejected'" class="text-box">
-                    <h3>Reason for Rejection</h3>
+                    <h3>{{"Reason for rejection" | translate}}</h3>
                     <h4>{{order.reject_reason}}</h4>
                 </div>
                 <div class="text-box" *ngIf="(order.status == 'Accepted' || order.status == 'Scheduled') && order.quotation_approved == 'Y'">
-                    <h3>Address</h3>
+                    <h3>{{"Address" | translate}}</h3>
                     <h4>{{order.service_address}}</h4>
                 </div>
                 <!-- <div class="text-box" *ngIf="(order.status == 'Accepted' || order.status == 'Scheduled') && order.quotation_approved == 'Y'">
@@ -138,7 +138,7 @@
                     <h4><a href="tel:{{customer.contact}}">{{customer.contact}}</a></h4>
                 </div> -->
                 <div class="text-box" *ngIf="(order.status == 'Scheduled')">
-                    <h3>Service Schedule</h3>
+                    <h3>{{"Service Schedule" | translate}}</h3>
                     <h4>{{order.service_schedule | date : "MMM d, y, h:mm a"}}</h4>
                 </div>
             </ion-item>
@@ -155,7 +155,7 @@
         </ion-grid>
 
         <div style="margin: 20px 10px 0 10px" *ngIf="order.status == 'Complete'">
-            <button (click)="takeOrderNote()" block ion-button class="button-wp-danger" icon-start><ion-icon name="alert"></ion-icon> LEAVE COMMENT</button>
+            <button (click)="takeOrderNote()" block ion-button class="button-wp-danger" icon-start><ion-icon name="alert"></ion-icon> {{"Leave Comment" | translate}}</button>
         </div>
 
         <br/><br/>

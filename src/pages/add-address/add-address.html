@@ -18,29 +18,29 @@
     <div class="form">
         <ion-list>
             <ion-item>
-                <ion-label floating>Address Type</ion-label>
-                <ion-input type="text" class="floating-with-placeholder" placeholder="Home, Office, etc." [(ngModel)]="address_type"></ion-input>
+                <ion-label floating>{{"Address Type" | translate}}</ion-label>
+                <ion-input type="text" class="floating-with-placeholder" placeholder="{{'Home, Office, etc.' | translate}}" [(ngModel)]="address_type"></ion-input>
             </ion-item> 
-            <p class='error' *ngIf="(!address_type.trim() || address_type.length < 4) && submitAttempt">Please enter valid address type. Minimum 4 characters required.</p>
+            <p class='error' *ngIf="(!address_type.trim() || address_type.length < 4) && submitAttempt">{{"Please enter valid address type. Minimum 4 characters required." | translate}}</p>
 
             <ion-item>
-                <ion-label floating>Address</ion-label>
+                <ion-label floating>{{"Address" | translate}}</ion-label>
                 <ion-textarea rows="5" [(ngModel)]="address"></ion-textarea>
             </ion-item>
-            <p class='error' *ngIf="(!address.trim() || address.length < 8) && submitAttempt">Please enter valid address. Minimum 8 characters required.</p>
+            <p class='error' *ngIf="(!address.trim() || address.length < 8) && submitAttempt">{{"Please enter valid address. Minimum 8 characters required." | translate}}</p>
 
             <ion-grid *ngIf="canDelete">
   				<ion-row>
     				<ion-col col-6>
-            			<button ion-button color="danger" (click)="remove()" outline>Remove Address</button>    
+            			<button ion-button color="danger" (click)="remove()" outline>{{"Remove Address" | translate}}</button>    
             		</ion-col>
             		<ion-col col-6>	
-            			<button block ion-button (click)="save()">SAVE</button>    
+            			<button block ion-button (click)="save()">{{"Save" | translate}}</button>    
             		</ion-col>
             	</ion-row>
             </ion-grid>
 
-            <button *ngIf="!canDelete" large block ion-button (click)="save()">SAVE</button>    			
+            <button *ngIf="!canDelete" large block ion-button (click)="save()">{{"Save" | translate}}</button>    			
         </ion-list> 
     </div>
 </ion-content>

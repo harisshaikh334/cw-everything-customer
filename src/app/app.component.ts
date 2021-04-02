@@ -32,7 +32,7 @@ export class MyApp {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.translate.setDefaultLang('en');
-      this.translate.use('en');
+      this.translate.use('hi');
 
       this.events.subscribe('add_to_cart', (cart_count) => {
         console.log('cart count ', cart_count);
