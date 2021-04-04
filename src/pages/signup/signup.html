@@ -50,12 +50,22 @@
                     <ion-input autocomplete="off" formControlName="address" type="text"></ion-input>
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.address.valid  && (signupForm.controls.address.dirty || submitAttempt)">Please enter a valid address.</p>
+                
+                <ion-item [class.invalid]="!signupForm.controls.pincode.valid && (signupForm.controls.pincode.dirty || submitAttempt)">
+                    <!-- <ion-icon class="material-icons" item-start>place</ion-icon> -->
+                    <ion-label floating>{{'Pincode' | translate}}</ion-label>
+                    <ion-select formControlName="pincode">
+                        <ion-option value="400612">400612</ion-option>
+                        <ion-option value="400613">400613</ion-option>
+                    </ion-select>
+                </ion-item>
+                <p class='error' *ngIf="!signupForm.controls.pincode.valid  && (signupForm.controls.pincode.dirty || submitAttempt)">Please select pincode.</p>
 
-                <ion-item [class.invalid]="!signupForm.controls.address.valid && (signupForm.controls.address.dirty || submitAttempt)">
+                <!-- <ion-item [class.invalid]="!signupForm.controls.address.valid && (signupForm.controls.address.dirty || submitAttempt)">
                     <ion-icon class="material-icons" item-start>shop</ion-icon>
                     <ion-label floating>{{'franchise code (Optional)' | translate}}</ion-label>
                     <ion-input autocomplete="off" formControlName="franchise_code" type="text"></ion-input>
-                </ion-item>
+                </ion-item> -->
 
 
                 <!-- <ion-item class="verification_code">
@@ -67,11 +77,11 @@
 
                 <ion-item>
                     <ion-label class="clickEnableCls">I agree to all the <a (click)="openTerms()" class="text-md-secondary">Terms &amp; Conditions</a> of Everything Services Pvt. Ltd.</ion-label>
-                    <ion-checkbox disabled checked="true" color="success"></ion-checkbox>
+                    <ion-checkbox [checked]="termsCheckbox" (ionChange)="termsCheckbox = !termsCheckbox" color="success"></ion-checkbox>
                 </ion-item>
 
             </ion-list>
-            <button ion-button block class="btn" (click)="signup()"> {{'signup' | translate}}</button>
+            <button ion-button block class="btn" [disabled]="!termsCheckbox" (click)="signup()"> {{'signup' | translate}}</button>
             <br/><br/>
         </form>    
     </div>

@@ -18,6 +18,7 @@ export class SignupPage {
 	public submitAttempt: boolean = false;	
 	public showLoader: boolean = false;	
 	public otp: number = null;
+	termsCheckbox:boolean=false;
 
 	constructor(public navCtrl: NavController, private platform: Platform, public navparams: NavParams, public formBuilder: FormBuilder, private http: HttpClient, public toastController: ToastController, public storage: Storage) {
 	}
@@ -52,6 +53,7 @@ export class SignupPage {
 				Validators.required,
 				Validators.minLength(8)
 			])],
+			pincode: [''],
 			// otp: ['', Validators.compose([
 			// 	Validators.required,
 			// 	Validators.minLength(6)
@@ -121,6 +123,7 @@ export class SignupPage {
 		if(this.signupForm.valid){
 			this.showLoader = true;
 			var data = this.signupForm.value;
+			console.log('data',data);
 			data['push_token'] = this.push_token;
 			delete data['otp'];
 			this.http.post<any>(APIURL+'customers?key=25e86ce50a1544c871f066cff5651adb', data)

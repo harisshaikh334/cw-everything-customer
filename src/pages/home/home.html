@@ -5,6 +5,12 @@
             <span>{{location}}</span>
         </ion-title>
     </ion-navbar>
+</ion-header>
+
+<ion-content class="bg-color">
+    <div *ngIf="showLoader" class="loader-bg">
+        <ion-spinner class="spinner" color="light"></ion-spinner>
+    </div>
     <div class="text_box">
         <h2>Hey {{user.name}},</h2>
         <ion-row>
@@ -22,12 +28,6 @@
                 <ion-searchbar (search)="getItems($event)" placeholder="{{'search_placeholder' | translate}}"></ion-searchbar>
             </ion-col>
         </ion-row>
-    </div>
-</ion-header>
-
-<ion-content class="bg-color">
-    <div *ngIf="showLoader" class="loader-bg">
-        <ion-spinner class="spinner" color="light"></ion-spinner>
     </div>
     <div class="categores_container">
         <ion-row>
