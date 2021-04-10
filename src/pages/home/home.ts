@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController, Platform } from 'ionic-angular';
+import { NavController, ModalController, Platform, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { CategoryPage } from '../category/category';
 import { HttpClient } from '@angular/common/http';
@@ -27,7 +27,16 @@ export class HomePage {
 	hidePop: boolean = true;
 	popHeading: string = '';
 
-	constructor(private locationAccuracy: LocationAccuracy, public diagnostic: Diagnostic, public platform: Platform, public navCtrl: NavController, public modalCtrl: ModalController, public geolocation: Geolocation, private http: HttpClient, public storage: Storage) {
+	constructor(
+		private locationAccuracy: LocationAccuracy, 
+		public diagnostic: Diagnostic, 
+		public platform: Platform, 
+		public navCtrl: NavController, 
+		public modalCtrl: ModalController, 
+		public geolocation: Geolocation, 
+		private events:Events,
+		private http: HttpClient, 
+		public storage: Storage) {
 		this.imageAttributes.push({
 		  element: 'class',
 		  value: 'crop_img'
@@ -54,6 +63,13 @@ export class HomePage {
 				this.getLocation();
 			}
 		});
+		this.events.subscribe("loginDone",()=>{
+			console.log('loginDone',);
+			this.storage.get('cuserinfo').then(result => {
+			  this.user = JSON.parse(result);
+			  console.log('this.user',this.user);
+			});
+		})
 	}
 
 	ionViewDidLoad(){
@@ -61,7 +77,7 @@ export class HomePage {
 			this.user = JSON.parse(result);
 			this.loadBanners();
 			this.loadPopUp();
-			this.http.get(APIURL+'categories?access-token='+this.user.token).subscribe({
+			this.http.get(APIURL+'categories').subscribe({
 		        next: response => {
 		        	this.showLoader = false;
 		        	this.categories = response;
@@ -74,7 +90,7 @@ export class HomePage {
 	}
 
 	loadBanners(){
-		this.http.get(APIURL+'banners?access-token='+this.user.token).subscribe({
+		this.http.get(APIURL+'banners').subscribe({
 			next: (response:any) => {
 				response.forEach(element => {
 					element['image'] = this.image_url + element['image'];
@@ -88,7 +104,7 @@ export class HomePage {
 		});
 	}
 	loadPopUp(){
-		this.http.get(APIURL+'popups?access-token='+this.user.token).subscribe({
+		this.http.get(APIURL+'popups').subscribe({
 			next: (response:any) => {
 				if (response && response[0] && response[0].image) {
 					setTimeout(() => {

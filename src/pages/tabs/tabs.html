@@ -1,7 +1,13 @@
-<ion-tabs name="myTabsNav">
+<ion-tabs name="myTabsNav" *ngIf="LoginDone">
     <ion-tab [root]="tab1Root" tabTitle="Home" tabIcon="md-home" tabsHideOnSubPages="true"></ion-tab>
     <ion-tab [root]="tab2Root" tabTitle="Appointments" tabIcon="md-calendar" tabsHideOnSubPages="true"></ion-tab>
     <ion-tab [root]="tab3Root" tabTitle="My Account" tabIcon="md-person" tabsHideOnSubPages="true"></ion-tab>
+    <!-- <ion-tab [root]="tab4Root" tabTitle="{{'account' | translate}}" tabIcon="md-person" tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab [root]="tab5Root" tabTitle="{{'chats' | translate}}" tabIcon="md-chatboxes" tabsHideOnSubPages="true"></ion-tab> -->
+</ion-tabs>
+<ion-tabs name="myTabsNav" *ngIf="!LoginDone">
+    <ion-tab [root]="tab1Root" tabTitle="Home" tabIcon="md-home" tabsHideOnSubPages="true"></ion-tab>
+    <ion-tab [root]="SigninPage" tabTitle="Sign In" tabIcon="md-log-in" tabsHideOnSubPages="true"></ion-tab>
     <!-- <ion-tab [root]="tab4Root" tabTitle="{{'account' | translate}}" tabIcon="md-person" tabsHideOnSubPages="true"></ion-tab>
     <ion-tab [root]="tab5Root" tabTitle="{{'chats' | translate}}" tabIcon="md-chatboxes" tabsHideOnSubPages="true"></ion-tab> -->
 </ion-tabs>

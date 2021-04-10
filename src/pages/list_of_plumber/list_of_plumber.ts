@@ -32,7 +32,7 @@ export class List_of_plumberPage {
 			//getting co-ordinates
 			if (window['cordova']) {
 				this.geolocation.getCurrentPosition().then(res => {
-					this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+res.coords.latitude+'&lng='+res.coords.longitude+'&access-token='+this.user.token)
+					this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+res.coords.latitude+'&lng='+res.coords.longitude)
 					.subscribe({
 						next: response => {
 							this.showLoader = false;
@@ -46,7 +46,7 @@ export class List_of_plumberPage {
 			} else {
 				
 				
-				this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+lat+'&lng='+long+'&access-token='+this.user.token)
+				this.http.get(APIURL+'customers/providers?subcat_id='+subcat_id+'&lat='+lat+'&lng='+long)
 				.subscribe({
 					next: response => {
 						this.showLoader = false;

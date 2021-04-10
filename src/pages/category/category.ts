@@ -29,7 +29,7 @@ export class CategoryPage {
 			if(this.navparams.get('q')){
 				this.getItems(this.navparams.get('q'));
 			} else {
-				this.http.get(APIURL+'subcategories?where[category_id]='+cat_id+'&access-token='+this.user.token).subscribe({
+				this.http.get(APIURL+'subcategories?where[category_id]='+cat_id).subscribe({
 			        next: response => {
 			        	this.showLoader = false;
 			        	this.subcat = response;
@@ -43,7 +43,7 @@ export class CategoryPage {
 	}
 
 	getItems(term){
-		this.http.get(APIURL+'subcategories?where[search]='+term+'&access-token='+this.user.token).subscribe({
+		this.http.get(APIURL+'subcategories?where[search]='+term).subscribe({
 	        next: response => {
 	        	this.category = term;
 	        	this.showLoader = false;

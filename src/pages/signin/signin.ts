@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController, Platform, Events } from 'ionic-angular';
+import { NavController, ToastController, Platform, Events, NavParams } from 'ionic-angular';
 import{ Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
@@ -10,6 +10,7 @@ import { SignupPage } from '../signup/signup';
 import { TabsPage } from '../tabs/tabs';
 import { ForgotPage } from '../forgot/forgot';
 import { Appointment_statusPage } from '../appointment_status/appointment_status';
+import { Plumber_profilePage } from '../plumber_profile/plumber_profile';
 
 @Component({
   selector: 'page-signin',
@@ -25,7 +26,16 @@ export class SigninPage {
 
 	firebasePlugin;
 	
-	constructor(public navCtrl: NavController,public events:Events, private platform: Platform, public formBuilder: FormBuilder, private http: HttpClient, public toastController: ToastController, public storage: Storage) {
+	constructor(
+		public navCtrl: NavController,
+		public events:Events, 
+		private platform: Platform, 
+		public formBuilder: FormBuilder, 
+		private http: HttpClient, 
+		public toastController: ToastController, 
+		public storage: Storage,
+		public navparams:NavParams
+		) {
 		
 		this.loginForm = formBuilder.group({
 			mobile: ['', Validators.compose([
@@ -137,6 +147,7 @@ export class SigninPage {
 			this.http.post<any>(APIURL+'customers/login', data)
 			.subscribe({
 				next: data => {
+					console.log('data',data);
 					this.submitAttempt = false;
 					this.showLoader = false;
 					
@@ -150,8 +161,18 @@ export class SigninPage {
 					} else {
 						this.loginForm.controls.mobile.setValue('');
 						this.loginForm.controls.password.setValue('');
-						this.storage.set('cuserinfo', JSON.stringify(data));
-						this.navCtrl.setRoot(TabsPage)
+						this.storage.set('cuserinfo', JSON.stringify(data)).then(()=>{
+							this.events.publish('loginDone');
+							let subcat_id = this.navparams.get('subcat_id');
+							let obj = this.navparams.get('obj');
+							console.log('subcat_id',subcat_id);
+							if(subcat_id){
+								console.log('this.navCtrl',this.navCtrl);
+								this.navCtrl.push(Plumber_profilePage,{subcat_id:subcat_id,obj:obj});
+							}else{
+								this.navCtrl.setRoot(TabsPage);
+							}
+						});
 					}
 				},
     			error: error => {

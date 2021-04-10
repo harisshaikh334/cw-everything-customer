@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, App, Platform, AlertController } from 'ionic-angular';
+import { NavController, App, Platform, AlertController, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { HttpClient } from '@angular/common/http';
 import { APIURL, IMAGE_URL } from '../../app/apiconfig';
@@ -12,6 +12,7 @@ import {FaqPage } from '../faq/faq';
 import {SigninPage} from '../signin/signin';
 import {My_addressesPage } from '../my_addresses/my_addresses';
 import { OrderHostoryPage } from '../order-hostory/order-hostory';
+import { TabsPage } from '../tabs/tabs';
 
 
 @Component({
@@ -26,7 +27,16 @@ export class AccountPage {
   public watch: any = null;
   profile_picture: string = '';
 
-  constructor(public navCtrl: NavController, private socialSharing: SocialSharing, public alertCtrl: AlertController, public platform: Platform, private http: HttpClient, public storage: Storage, private app: App) {
+  constructor(
+    public navCtrl: NavController, 
+    private socialSharing: SocialSharing, 
+    public alertCtrl: AlertController, 
+    public platform: Platform, 
+    private http: HttpClient, 
+    public storage: Storage, 
+    private app: App,
+    private events:Events,
+    ) {
 
   }
 
@@ -78,13 +88,17 @@ export class AccountPage {
             .subscribe({
               next: response => {
                 this.showLoader = false;
-                this.storage.remove('cuserinfo');
-                this.app.getRootNav().setRoot(SigninPage)
+                this.storage.remove('cuserinfo').then(()=>{
+							    this.events.publish('logoutDone');
+                  this.app.getRootNav().setRoot(TabsPage)
+                });
               },
               error: err => {
                 this.showLoader = false;
-                this.storage.remove('cuserinfo');
-                this.app.getRootNav().setRoot(SigninPage);
+                this.storage.remove('cuserinfo').then(()=>{
+							    this.events.publish('logoutDone');
+                  this.app.getRootNav().setRoot(TabsPage)
+                });
               }
             })
           }

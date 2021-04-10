@@ -12,7 +12,8 @@
         <ion-spinner class="spinner" color="light"></ion-spinner>
     </div>
     <div class="text_box">
-        <h2>Hey {{user.name}},</h2>
+        <h2 *ngIf="user">Hey {{user.name}},</h2>
+        <h2 *ngIf="!user">Hello Sir/Madam,</h2>
         <ion-row>
             <ion-slides>
                 <ion-slide *ngFor="let banner of banner_images">

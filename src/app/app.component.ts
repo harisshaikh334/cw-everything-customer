@@ -7,12 +7,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { SigninPage } from '../pages/signin/signin';
 import { TranslateService } from '../../node_modules/@ngx-translate/core';
 import { CartDetailsPage } from '../pages/cart-details/cart-details';
+import { TabsPage } from '../pages/tabs/tabs';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp { 
-  rootPage:any = SigninPage;
+  rootPage:any = TabsPage;
   cart_count_number:number = 0;
   @ViewChild('nav') nav: NavController;
 

@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { HttpClient } from '@angular/common/http';
 import{ Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+import { SigninPage } from '../signin/signin';
 
 @Component({
 	template: `
@@ -100,6 +101,8 @@ export class Plumber_profilePage {
 	async ionViewDidLoad(){
 		this.subcat_id = this.navparams.get('subcat_id');
 		this.details = JSON.parse(this.navparams.get('obj'));
+		console.log('this.subcat_id',this.subcat_id);
+		console.log('this.details',this.details);
 		await this.storage.get('cart_list').then((data) => {
 			if (data) {
 				this.cart_list = data;
@@ -126,7 +129,7 @@ export class Plumber_profilePage {
 				this.getProductList();
 			}
 			this.showLoader = true;
-			this.http.get(APIURL+'reviews/ratings?id='+this.details.id+'&access-token='+this.user.token)
+			this.http.get(APIURL+'reviews/ratings?id='+this.details.id)
 			.subscribe({
 		        next: response => {
 		        	this.showLoader = false;
@@ -142,7 +145,7 @@ export class Plumber_profilePage {
 
 	getProductList() {
 		// let url ="https://everythingservices.in/admin14/capi/v1/customers/product-list?sp_id=777&access-token=wVHYUA5wHPgAgrRBg9z6Ut_2C_8PX9cX";
-		let url = APIURL+'customers/product-list?sp_id='+this.details.id+'&access-token='+this.user.token
+		let url = APIURL+'customers/product-list?sp_id='+this.details.id
 		this.http.get(url)
 			.subscribe({
 		        next: (response:any) => {
@@ -179,66 +182,77 @@ export class Plumber_profilePage {
 	}
 
 	addCart(item) {
-		let popover = this.popoverCtrl.create(CartQuantity, {stock: item.stock, edit: false});
-		popover.present({
-			ev: 0
-		});
-		popover.onDidDismiss((data) => {
-			if (!data) {
-				return false;
-			}
-			let url = APIURL + "customers/cartcreate?access-token="+ this.user.token;
-			let cart_obj = {
-				customer_id: this.user.id,
-				product_id: item.id,
-				unit: item.unit,
-				qty:data,
-				mrp: item.mrp,
-				sp_id: this.details.id,
-				subcat_id: this.navparams.get('subcat_id'),
-				sale_price: item.sale_price
-			};
-			this.showLoader = true;
-			this.http.post(url, cart_obj)
-			.subscribe({
-		        next: (response:any) => {
-		        	this.showLoader = false;
-					if (response.error != 1) {
-						item['added_in_cart'] = true;
-						item['cart_details'] = response;
-						const toast = this.toastController.create({
-							message: 'Product added in trolly.',
-							duration: 2000,
-							cssClass: 'success',
-							position: 'bottom'
-						});
-						toast.present();
-						this.getCartCount();
-						this.getCartList();
-					} else {
-						const toast = this.toastController.create({
-							message: response.reason,
-							duration: 2000,
-							cssClass: 'toast-danger',
-							position: 'bottom'
-						});
-						toast.present();
+		this.storage.get('cuserinfo').then(result => {
+			this.user = JSON.parse(result);
+			if(result){
+				let popover = this.popoverCtrl.create(CartQuantity, {stock: item.stock, edit: false});
+				popover.present({
+					ev: 0
+				});
+				popover.onDidDismiss((data) => {
+					if (!data) {
+						return false;
 					}
-					
-		        },
-		        error: err => {
-		        	this.showLoader = false;
-					const toast = this.toastController.create({
-						message: 'Something went wrong.',
-						duration: 2000,
-						cssClass: 'toast-danger',
-						position: 'bottom'
-					});
-					toast.present();
-		        }
-		});
-        
-		})
+					let url = APIURL + "customers/cartcreate?access-token="+ this.user.token;
+					let cart_obj = {
+						customer_id: this.user.id,
+						product_id: item.id,
+						unit: item.unit,
+						qty:data,
+						mrp: item.mrp,
+						sp_id: this.details.id,
+						subcat_id: this.navparams.get('subcat_id'),
+						sale_price: item.sale_price
+					};
+					this.showLoader = true;
+					this.http.post(url, cart_obj)
+					.subscribe({
+						next: (response:any) => {
+							this.showLoader = false;
+							if (response.error != 1) {
+								item['added_in_cart'] = true;
+								item['cart_details'] = response;
+								const toast = this.toastController.create({
+									message: 'Product added in trolly.',
+									duration: 2000,
+									cssClass: 'success',
+									position: 'bottom'
+								});
+								toast.present();
+								this.getCartCount();
+								this.getCartList();
+							} else {
+								const toast = this.toastController.create({
+									message: response.reason,
+									duration: 2000,
+									cssClass: 'toast-danger',
+									position: 'bottom'
+								});
+								toast.present();
+							}
+							
+						},
+						error: err => {
+							this.showLoader = false;
+							const toast = this.toastController.create({
+								message: 'Something went wrong.',
+								duration: 2000,
+								cssClass: 'toast-danger',
+								position: 'bottom'
+							});
+							toast.present();
+						}
+				});
+				})
+			}else{
+				// make login
+				let subcat_id = this.navparams.get('subcat_id');
+				let details = this.navparams.get('obj');
+				console.log('this.navCtrl',this.navCtrl);
+				this.navCtrl.push(SigninPage,{subcat_id:subcat_id,obj:details});
+			}
+			console.log('this.user',this.user);
+		  });
 	}
 
 	editQty(item) {

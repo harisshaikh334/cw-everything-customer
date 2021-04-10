@@ -20,7 +20,7 @@
 
                 <ion-item [class.invalid]="!signupForm.controls.email.valid && (signupForm.controls.email.dirty || submitAttempt)">
                     <ion-icon class="material-icons" item-start>email</ion-icon>
-                    <ion-label floating>{{'email_address' | translate}}</ion-label>
+                    <ion-label floating>{{'email_address (Optional)' | translate}}</ion-label>
                     <ion-input autocomplete="off" formControlName="email" type="text"></ion-input>
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.email.valid  && (signupForm.controls.email.dirty || submitAttempt)">Please enter a valid email address.</p>
