@@ -10,7 +10,6 @@ page-plumber_profile {
     }
     .cart-btn {
         float: right;
-        top: -100px;
     }
 
     .cart-qty {
@@ -19,6 +18,9 @@ page-plumber_profile {
         justify-content: right;
         /* width: 120px; */
         float: right;
+        top: 0px;
+        position: absolute;
+        right: 0px;
     }
 
     .loader-bg{
@@ -160,8 +162,8 @@ page-plumber_profile {
                 font-weight: 600;
                 letter-spacing: .5px;
                 z-index: 99;
-                text-align: justify;
-                max-width: 150px;
+                text-align: center;
+                // max-width: 150px;
 
                 &.segment-activated {
                     color: $theme-color;

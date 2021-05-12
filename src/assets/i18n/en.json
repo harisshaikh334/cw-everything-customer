@@ -17,7 +17,7 @@
     "signup_text": "We've sent OTP on below given number",
     "full_name": "Full Name",
     "enter_verification_code": "Enter Verification Code",
-    "email_address": "Email Address",
+    "Email Address (Optional)": "Email Address (Optional)",
     "forgot_password": "Forgot Password?",
     "forgot_text_1": "Enter your rgistered email address,",
     "forgot_text_2": "we'll send password reset info on mail.",

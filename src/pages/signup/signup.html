@@ -20,7 +20,7 @@
 
                 <ion-item [class.invalid]="!signupForm.controls.email.valid && (signupForm.controls.email.dirty || submitAttempt)">
                     <ion-icon class="material-icons" item-start>email</ion-icon>
-                    <ion-label floating>{{'email_address (Optional)' | translate}}</ion-label>
+                    <ion-label floating>{{'Email Address (Optional)' | translate}}</ion-label>
                     <ion-input autocomplete="off" formControlName="email" type="text"></ion-input>
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.email.valid  && (signupForm.controls.email.dirty || submitAttempt)">Please enter a valid email address.</p>
@@ -44,6 +44,18 @@
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.password.valid  && (signupForm.controls.password.dirty || submitAttempt)">Please enter minimum 8 character password.</p>
 
+                <ion-item [class.invalid]="!signupForm.controls.confirm_password.valid && (signupForm.controls.confirm_password.dirty || submitAttempt)">
+                    <ion-icon class="material-icons" item-start>lock</ion-icon>
+                    <ion-label floating>Confirm Password</ion-label>
+                    <ion-input autocomplete="off" formControlName="confirm_password" type="password" *ngIf="!showConfirmPasswordText"></ion-input>
+                    <ion-input autocomplete="off" formControlName="confirm_password" type="text" *ngIf="showConfirmPasswordText"></ion-input>
+                    <button ion-button clear color="dark" type="button" item-right (click)="showConfirmPasswordText = !showConfirmPasswordText">
+                        <ion-icon style="font-size: 20px; margin-top: 13px" name="eye"></ion-icon>
+                    </button>
+                </ion-item>
+                <p class='error' *ngIf="!signupForm.controls.confirm_password.valid  && (signupForm.controls.confirm_password.dirty || submitAttempt)">Please enter minimum 8 character password.</p>
+                <p class='error' *ngIf="(signupForm.controls['confirm_password'].value != signupForm.controls['password'].value)">Password mismatch.</p>
+
                 <ion-item [class.invalid]="!signupForm.controls.address.valid && (signupForm.controls.address.dirty || submitAttempt)">
                     <ion-icon class="material-icons" item-start>place</ion-icon>
                     <ion-label floating>{{'Address' | translate}}</ion-label>
@@ -51,13 +63,18 @@
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.address.valid  && (signupForm.controls.address.dirty || submitAttempt)">Please enter a valid address.</p>
                 
-                <ion-item [class.invalid]="!signupForm.controls.pincode.valid && (signupForm.controls.pincode.dirty || submitAttempt)">
-                    <!-- <ion-icon class="material-icons" item-start>place</ion-icon> -->
-                    <ion-label floating>{{'Pincode' | translate}}</ion-label>
-                    <ion-select formControlName="pincode">
-                        <ion-option value="400612">400612</ion-option>
-                        <ion-option value="400613">400613</ion-option>
-                    </ion-select>
+                <ion-item>
+                    <ion-label>Pincode</ion-label>
+                    <select-searchable
+                        item-content
+                        formControlName="pincode"
+                        [(ngModel)]="pincode"
+                        [items]="pincodes"
+                        itemValueField="id"
+                        itemTextField="name"
+                        [canSearch]="true"
+                        (onChange)="pincodeChange($event)">
+                    </select-searchable>
                 </ion-item>
                 <p class='error' *ngIf="!signupForm.controls.pincode.valid  && (signupForm.controls.pincode.dirty || submitAttempt)">Please select pincode.</p>
 

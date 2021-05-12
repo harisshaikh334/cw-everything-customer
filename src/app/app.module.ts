@@ -51,6 +51,8 @@ import { StarRatingModule } from 'ionic3-star-rating';
 import { CartDetailsPage } from '../pages/cart-details/cart-details';
 import { OrderHostoryPage } from '../pages/order-hostory/order-hostory';
 import { OrderDetailsPage } from '../pages/order-details/order-details';
+import { SelectSearchableModule } from 'ionic-select-searchable';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -97,6 +99,7 @@ export function createTranslateLoader(http: HttpClient) {
     IonicStorageModule.forRoot(),
     IonicImageLoader.forRoot(),
     ionicGalleryModal.GalleryModalModule,
+    SelectSearchableModule,
     StarRatingModule,
     TranslateModule.forRoot({
       loader: {
@@ -150,6 +153,7 @@ export function createTranslateLoader(http: HttpClient) {
     DatePicker,
     Firebase,
     LocationAccuracy,
+    InAppBrowser,
     ionicGalleryModal.GalleryModalHammerConfig,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

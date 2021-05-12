@@ -43,6 +43,22 @@
                     <ion-input type="text" [(ngModel)]="profile.address" name="address" #address="ngModel" [ngModelOptions]="{standalone: true}" autocomplete="off" required maxlength="200"></ion-input>
                 </ion-item>
                 <ion-item>
+                    <ion-label>Pincode</ion-label>
+                    <select-searchable
+                        item-content
+                        [(ngModel)]="profile.pincode"
+                        name="pincode" #pincode="ngModel"
+                        required
+                        [ngModelOptions]="{standalone: true}"
+                        [items]="pincodes"
+                        itemValueField="id"
+                        itemTextField="name"
+                        [canSearch]="true"
+                        (onChange)="pincodeChange($event)">
+                    </select-searchable>
+                </ion-item>
+
+                <ion-item>
                     <ion-icon class="material-icons" item-start>wc</ion-icon>
                     <ion-label>Gender</ion-label>
                     <ion-select [(ngModel)]="profile.gender" #gender="ngModel" required="true" [ngModelOptions]="{standalone: true}">

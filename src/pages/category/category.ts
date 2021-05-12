@@ -57,6 +57,6 @@ export class CategoryPage {
 	}
 
 	list_of_plumber(id, subcat){
-	    this.navCtrl.push(List_of_plumberPage,{subcat: subcat, subcat_id: id})
+	    this.navCtrl.push(List_of_plumberPage,{subcat: subcat, subcat_id: id, cat_id:this.navparams.get('id')})
 	} 
 }

@@ -17,6 +17,8 @@ export class AddAddressPage {
   showLoader: boolean = false;
   user: any = {}
   canDelete: boolean = false;
+  pincode:any;
+  pincodes:any[]=[];
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public toastController: ToastController, private http: HttpClient, public storage: Storage, public viewCtrl: ViewController, public navParams: NavParams) {
   }
@@ -29,6 +31,7 @@ export class AddAddressPage {
 	} else {
 		this.title = 'Add Address';
 	}
+	this.getPincodes();
 
 	this.storage.get('cuserinfo').then(result => {
 	  this.user = JSON.parse(result);
@@ -39,13 +42,13 @@ export class AddAddressPage {
 
   save(){
   	this.submitAttempt = true;
-  	if(!this.address_type || !this.address){
+  	if(!this.address_type || !this.address || !this.pincode){
 		return false;
 	}
 
 	this.showLoader = true;
 
-	const postdata = {address_type: this.address_type, address: this.address, customer_id: this.user.id}
+	const postdata = {address_type: this.address_type, address: this.address,pincode:this.pincode.id, customer_id: this.user.id}
 	if(this.navParams.get('obj')){
 		postdata['id'] = this.navParams.get('obj').id;
 	}
@@ -139,6 +142,44 @@ export class AddAddressPage {
 
   dismiss() {
     this.viewCtrl.dismiss();
+  }
+  pincodeChange($event){
+	  console.log('this.pincode',this.pincode);
+  }
+  getPincodes(){
+	this.http.get<any>(APIURL+'pincodes')
+	.subscribe({
+		next: response => {
+			if(response.error){
+				const toast = this.toastController.create({
+			      message: response.reason,
+			      duration: 4000,
+			      cssClass: 'toast-danger',
+			      position: 'bottom'
+			    });
+			    toast.present();
+			    return false;
+			} else {
+				console.log('response',response);
+				this.pincodes = response;
+				if(this.navParams.get('obj').pincode){
+					let obj = this.pincodes.find(e=>e.id==this.navParams.get('obj').pincode);
+					console.log('obj',obj);
+					this.pincode = obj;
+				}
+		    }
+		},
+		error: err => {
+			this.showLoader = false;
+			const toast = this.toastController.create({
+		      message: err.message,
+		      duration: 4000,
+		      cssClass: 'toast-danger',
+		      position: 'bottom'
+		    });
+		    toast.present();
+		}
+	})
   }
 
 }

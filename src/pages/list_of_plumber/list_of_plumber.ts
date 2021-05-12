@@ -13,6 +13,7 @@ import { Plumber_profilePage } from '../plumber_profile/plumber_profile';
 export class List_of_plumberPage {
 
 	public subcategory: string = '';
+	public cat_id: any;
 	public user: any = {};
 	public showLoader: boolean = true;
 	public providers: any = [];
@@ -25,6 +26,7 @@ export class List_of_plumberPage {
 	ionViewDidLoad(){
 		let subcat_id = this.navparams.get('subcat_id');
 		this.subcategory = this.navparams.get('subcat');
+		this.cat_id = this.navparams.get('cat_id');
 		this.storage.get('cuserinfo').then(result => {
 			this.user = JSON.parse(result);
 			let lat = 19.176667;
@@ -61,6 +63,6 @@ export class List_of_plumberPage {
 	}
 
 	plumber_profile(index){
-		this.navCtrl.push(Plumber_profilePage,{subcat_id: this.navparams.get('subcat_id'), obj: JSON.stringify(this.providers[index])})
+		this.navCtrl.push(Plumber_profilePage,{subcat_id: this.navparams.get('subcat_id'), cat_id:this.cat_id ,obj: JSON.stringify(this.providers[index])})
 	}  
 }

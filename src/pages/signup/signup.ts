@@ -19,6 +19,8 @@ export class SignupPage {
 	public showLoader: boolean = false;	
 	public otp: number = null;
 	termsCheckbox:boolean=false;
+	pincode:any;
+	pincodes:any[]=[];
 
 	constructor(public navCtrl: NavController, private platform: Platform, public navparams: NavParams, public formBuilder: FormBuilder, private http: HttpClient, public toastController: ToastController, public storage: Storage) {
 	}
@@ -26,6 +28,7 @@ export class SignupPage {
 	ngOnInit() {
 		this.buildForm();
 		this.setEmailValidators();
+		this.getPincodes();
 	}
 
 	ionViewDidEnter(){
@@ -49,11 +52,15 @@ export class SignupPage {
 				Validators.required,
 				Validators.minLength(8)
 			])],
+			confirm_password: ['', Validators.compose([
+				Validators.required,
+				Validators.minLength(8)
+			])],
 			address: ['', Validators.compose([
 				Validators.required,
 				Validators.minLength(8)
 			])],
-			pincode: [''],
+			pincode: ['',Validators.required],
 			// otp: ['', Validators.compose([
 			// 	Validators.required,
 			// 	Validators.minLength(6)
@@ -126,6 +133,7 @@ export class SignupPage {
 			console.log('data',data);
 			data['push_token'] = this.push_token;
 			delete data['otp'];
+			delete data['confirm_password'];
 			this.http.post<any>(APIURL+'customers?key=25e86ce50a1544c871f066cff5651adb', data)
 			.subscribe({
 				next: data => {
@@ -165,4 +173,37 @@ export class SignupPage {
 			});
 		}
 	} 
+	pincodeChange($event){
+		console.log('this.pincode',this.pincode);
+	}
+	getPincodes(){
+	  this.http.get<any>(APIURL+'pincodes')
+	  .subscribe({
+		  next: response => {
+			  if(response.error){
+				  const toast = this.toastController.create({
+					message: response.reason,
+					duration: 4000,
+					cssClass: 'toast-danger',
+					position: 'bottom'
+				  });
+				  toast.present();
+				  return false;
+			  } else {
+				  console.log('response',response);
+				  this.pincodes = response;
+			  }
+		  },
+		  error: err => {
+			  this.showLoader = false;
+			  const toast = this.toastController.create({
+				message: err.message,
+				duration: 4000,
+				cssClass: 'toast-danger',
+				position: 'bottom'
+			  });
+			  toast.present();
+		  }
+	  })
+	}
 }

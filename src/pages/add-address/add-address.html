@@ -29,6 +29,20 @@
             </ion-item>
             <p class='error' *ngIf="(!address.trim() || address.length < 8) && submitAttempt">Please enter valid address. Minimum 8 characters required.</p>
 
+            <ion-item>
+                <ion-label>Pincode</ion-label>
+                <select-searchable
+                    item-content
+                    [(ngModel)]="pincode"
+                    [items]="pincodes"
+                    itemValueField="id"
+                    itemTextField="name"
+                    [canSearch]="true"
+                    (onChange)="pincodeChange($event)">
+                </select-searchable>
+            </ion-item>
+            <p class='error' *ngIf="(!pincode) && submitAttempt">Please select pincode</p>
+
             <ion-grid *ngIf="canDelete">
   				<ion-row>
     				<ion-col col-6>

@@ -825,3 +825,22 @@ button.action-sheet-cancel {
 .modal-body p {
     font-size: 16px;
 }
+
+.select-searchable-value{
+    color: white;
+}
+.show-page{
+    ion-header{
+        background: $bg-color;
+        button{
+            color: white;
+        }
+    }
+    ion-content{
+        background: $bg-color;
+        button{
+            margin: 2%;
+            border-radius: 8px;
+        }
+    }
+}

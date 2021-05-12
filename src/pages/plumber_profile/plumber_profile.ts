@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, ActionSheetController, App, ToastController, Tabs, Events, ViewController, PopoverController } from 'ionic-angular';
-import { APIURL } from '../../app/apiconfig';
+import { APIURL, IMAGE_URL } from '../../app/apiconfig';
 import { Storage } from '@ionic/storage';
 import { HttpClient } from '@angular/common/http';
 import{ Validators, FormBuilder, FormGroup } from '@angular/forms';
@@ -73,7 +73,7 @@ export class CartQuantity {
   templateUrl: 'plumber_profile.html'
 })
 export class Plumber_profilePage {
- 	about_tab: string = "about";
+ 	about_tab: string = "product";
  	details: any = {}
  	apiurl: string = APIURL;
  	ratings: any = {}
@@ -88,7 +88,9 @@ export class Plumber_profilePage {
 	productDesc: string  = '';
 	cart_list = [];
 	subcat_id:any;
+	cat_id:any;
 	disable_cart_btn: boolean = false;
+	LOGIN: boolean=false;
 	constructor(public navCtrl: NavController,public popoverCtrl: PopoverController, private app: App, public toastController: ToastController, public formBuilder: FormBuilder, private camera: Camera, public actionsheet: ActionSheetController, private http: HttpClient, public storage: Storage, private navparams: NavParams, public events: Events) {
 
 	}
@@ -100,9 +102,16 @@ export class Plumber_profilePage {
 
 	async ionViewDidLoad(){
 		this.subcat_id = this.navparams.get('subcat_id');
-		this.details = JSON.parse(this.navparams.get('obj'));
-		console.log('this.subcat_id',this.subcat_id);
+		this.cat_id = this.navparams.get('cat_id');
+		this.details = (this.navparams.get('obj'))?JSON.parse(this.navparams.get('obj')):{};
+		let sp_id = this.navparams.get('sp_id');
 		console.log('this.details',this.details);
+		console.log('sp_id',sp_id);
+		this.showLoader = true;
+		if(sp_id){
+			await this.getProviderDetails(sp_id).catch(err=>{console.error('err',err);});
+		}
+
 		await this.storage.get('cart_list').then((data) => {
 			if (data) {
 				this.cart_list = data;
@@ -121,31 +130,59 @@ export class Plumber_profilePage {
 			console.log('disable cart is ', this.disable_cart_btn);
 		})
 		this.storage.get('cuserinfo').then(result => {
-			this.user = JSON.parse(result);
-			this.details.is_product = 1;
-			
-			if (this.details.is_product == 1) {
-				this.about_tab = "product";
-				this.getProductList();
+			if(result){
+				this.user = JSON.parse(result);
+				this.details.is_product = 1;
+				
+				if (this.details.is_product == 1) {
+					this.about_tab = "product";
+					this.getProductList();
+				}
+				
+				this.http.get(APIURL+'reviews/ratings?id='+this.details.id+'&access-token='+this.user.token)
+				.subscribe({
+					next: response => {
+						this.showLoader = false;
+						this.ratings = response;
+					},
+					error: err => {
+						this.showLoader = false;
+						console.error(err);
+					}
+				});
+				this.LOGIN=true;
+			}else{
+				this.LOGIN=false;
 			}
-			this.showLoader = true;
-			this.http.get(APIURL+'reviews/ratings?id='+this.details.id)
+			
+		});
+	}
+
+	getProviderDetails(sp_id){
+		return new Promise((res,rej)=>{
+			let lat = 19.176667;
+			let long = 73.04222;
+			this.http.get(APIURL+'customers/providers?subcat_id='+this.subcat_id+'&lat='+lat+'&lng='+long)
 			.subscribe({
-		        next: response => {
-		        	this.showLoader = false;
-		        	this.ratings = response;
-		        },
-		        error: err => {
-		        	this.showLoader = false;
-		          	console.error(err);
-		        }
-		    });
+				next: (response:any) => {
+					this.showLoader = false;
+					let details = response.find(e=>e.id==sp_id);
+					this.details = details;
+					console.log('this.details',this.details);
+					res(true);
+				},
+				error: err => {
+					console.error(err);
+					rej(err);
+				}
+			});
 		});
 	}
 
 	getProductList() {
 		// let url ="https://everythingservices.in/admin14/capi/v1/customers/product-list?sp_id=777&access-token=wVHYUA5wHPgAgrRBg9z6Ut_2C_8PX9cX";
-		let url = APIURL+'customers/product-list?sp_id='+this.details.id
+		// let url = APIURL+'customers/product-list?sp_id='+this.details.id
+		let url = `${APIURL}customers/product-list?sp_id=${this.details.id}&category_id=${this.cat_id}&subcat_id=${this.subcat_id}&access-token=${this.user.token}`;
 		this.http.get(url)
 			.subscribe({
 		        next: (response:any) => {
@@ -153,6 +190,7 @@ export class Plumber_profilePage {
 					response.forEach(element => {
 						element['added_in_cart'] = false;
 						element['cart_details'] = {};
+						element['image_url'] = IMAGE_URL + element.image;
 						let index = this.cart_list.findIndex((item) => {
 							return item.product_name == element.name;
 						});
@@ -182,6 +220,7 @@ export class Plumber_profilePage {
 	}
 
 	addCart(item) {
+		console.log('item',item);
 		this.storage.get('cuserinfo').then(result => {
 			this.user = JSON.parse(result);
 			if(result){
@@ -193,10 +232,11 @@ export class Plumber_profilePage {
 					if (!data) {
 						return false;
 					}
+					console.log('itemy',item);
 					let url = APIURL + "customers/cartcreate?access-token="+ this.user.token;
 					let cart_obj = {
 						customer_id: this.user.id,
-						product_id: item.id,
+						product_id: item.product_id,
 						unit: item.unit,
 						qty:data,
 						mrp: item.mrp,
@@ -251,7 +291,6 @@ export class Plumber_profilePage {
 				console.log('this.navCtrl',this.navCtrl);
 				this.navCtrl.push(SigninPage,{subcat_id:subcat_id,obj:details});
 			}
-			console.log('this.user',this.user);
 		  });
 	}
 
@@ -464,60 +503,85 @@ export class Plumber_profilePage {
 		var that = this;
 		importFile(0, that);
 	}
+	reqTabClick(){
+		this.storage.get('cuserinfo').then(result => {
+			console.log('result result',result);
+			if(!result){
+				let subcat_id = this.navparams.get('subcat_id');
+				let details = this.navparams.get('obj');
+				console.log('this.navCtrl',this.navCtrl);
+				this.navCtrl.push(SigninPage,{subcat_id:subcat_id,obj:details});
+			}else{
+				// make login
+				console.log('Already logged in',);
+			}
+		});	
+	}
 
  	request_quote(){
- 		this.submitAttempt = true;
- 		if(!this.orderForm.valid){
- 			return false;
- 		}
-
- 		console.log(this.uploadedFiles)
-
- 		let formData = new FormData();
- 		for (var i = 0; i < this.uploadedFiles.length; i++) {
- 			console.log('length is',this.uploadedFiles[i].length)
-	    	formData.append('file[]', this.uploadedFiles[i]);
-	    }
- 		formData.append('requirement', this.orderForm.value['requirement']);
- 		formData.append('subcat_id', this.navparams.get('subcat_id'));
- 		formData.append('customer_id', this.user.id);
- 		formData.append('sp_id', this.details.id);
-
-		console.log('form data is ', formData);
-	    this.showLoader = true;
-	    this.http.post<any>(APIURL+'orders?access-token='+this.user.token, formData)
-	    .subscribe({
-	    	next: response => {
-				this.showLoader = false;
-				if(response.error){
-					const toast = this.toastController.create({
-				      message: response.reason,
-				      duration: 5000,
-				      cssClass: 'toast-danger',
-				      position: 'top'
-				    });
-				    toast.present();
-				    return false;
-				} else {
-					const toast = this.toastController.create({
-				      message: 'Order successfully created. You will be notified once you receive quotation from service provider.',
-				      duration: 5000,
-				      cssClass: 'toast-success',
-				      position: 'top'
-				    });
-				    toast.present();
-				    this.orderForm.controls.requirement.setValue('');
-				    document.querySelector('.uploaded_images').innerHTML = '';
-				    const tabsNav = this.app.getNavByIdOrName('myTabsNav') as Tabs;
-					tabsNav.select(1);
-					this.navCtrl.popToRoot();
+		this.storage.get('cuserinfo').then(result => {
+			console.log('result result',result);
+			if(result){
+				this.submitAttempt = true;
+				if(!this.orderForm.valid){
+					return false;
 				}
-			},
-			error: error => {
-				this.showLoader = false;
-				this.submitAttempt = false;
-				console.error('There was an error!', error);
+
+				console.log(this.uploadedFiles)
+
+				let formData = new FormData();
+				for (var i = 0; i < this.uploadedFiles.length; i++) {
+					console.log('length is',this.uploadedFiles[i].length)
+					formData.append('file[]', this.uploadedFiles[i]);
+				}
+				formData.append('requirement', this.orderForm.value['requirement']);
+				formData.append('subcat_id', this.navparams.get('subcat_id'));
+				formData.append('customer_id', this.user.id);
+				formData.append('sp_id', this.details.id);
+
+				console.log('form data is ', formData);
+				this.showLoader = true;
+				this.http.post<any>(APIURL+'orders?access-token='+this.user.token, formData)
+				.subscribe({
+					next: response => {
+						this.showLoader = false;
+						if(response.error){
+							const toast = this.toastController.create({
+							message: response.reason,
+							duration: 5000,
+							cssClass: 'toast-danger',
+							position: 'top'
+							});
+							toast.present();
+							return false;
+						} else {
+							const toast = this.toastController.create({
+							message: 'Order successfully created. You will be notified once you receive quotation from service provider.',
+							duration: 5000,
+							cssClass: 'toast-success',
+							position: 'top'
+							});
+							toast.present();
+							this.orderForm.controls.requirement.setValue('');
+							document.querySelector('.uploaded_images').innerHTML = '';
+							const tabsNav = this.app.getNavByIdOrName('myTabsNav') as Tabs;
+							tabsNav.select(1);
+							this.navCtrl.popToRoot();
+						}
+					},
+					error: error => {
+						this.showLoader = false;
+						this.submitAttempt = false;
+						console.error('There was an error!', error);
+					}
+				})
+			}else{
+				// make login
+				let subcat_id = this.navparams.get('subcat_id');
+				let details = this.navparams.get('obj');
+				console.log('this.navCtrl',this.navCtrl);
+				this.navCtrl.push(SigninPage,{subcat_id:subcat_id,obj:details});
 			}
-	    })
+		});
   	}  
 }

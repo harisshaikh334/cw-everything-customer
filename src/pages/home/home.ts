@@ -8,6 +8,8 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { ImageAttribute } from 'ionic-image-loader';
 import { LocationAccuracy } from '@ionic-native/location-accuracy';
 import { Diagnostic } from '@ionic-native/diagnostic';
+import { Plumber_profilePage } from '../plumber_profile/plumber_profile';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @Component({
   selector: 'page-home',
@@ -26,6 +28,7 @@ export class HomePage {
 	public banner_images = [];
 	hidePop: boolean = true;
 	popHeading: string = '';
+	popup: any;
 
 	constructor(
 		private locationAccuracy: LocationAccuracy, 
@@ -36,7 +39,9 @@ export class HomePage {
 		public geolocation: Geolocation, 
 		private events:Events,
 		private http: HttpClient, 
-		public storage: Storage) {
+		public storage: Storage,
+		private iab: InAppBrowser,
+		) {
 		this.imageAttributes.push({
 		  element: 'class',
 		  value: 'crop_img'
@@ -106,11 +111,13 @@ export class HomePage {
 	loadPopUp(){
 		this.http.get(APIURL+'popups').subscribe({
 			next: (response:any) => {
-				if (response && response[0] && response[0].image) {
+				if (response && response.length > 0) {
 					setTimeout(() => {
 						this.hidePop = false;
-						this.popup_image = this.image_url + response[0]['image'];
-						this.popHeading = response[0]['name'];
+						let pop = response.find(e=>e.status==1);
+						this.popup_image = this.image_url + pop['image'];
+						this.popHeading = pop['name'];
+						this.popup = pop
 					}, 10000);
 					
 					// let profileModal = this.modalCtrl.create(ImagePopupPage, { popup_image: this.image_url + response[0]['image'] });
@@ -157,5 +164,22 @@ export class HomePage {
 
 	category(id, cat){
 		this.navCtrl.push(CategoryPage,{id: id, category: cat})
+	}
+	redirect(){
+		if(this.popup.category_id && this.popup.sp_id && this.popup.subcat_id){
+			this.navCtrl.push(Plumber_profilePage,{subcat_id: this.popup.subcat_id, cat_id: this.popup.category_id, sp_id:this.popup.sp_id})
+		}else if(this.popup.link){
+			// window.open(this.popup.link,'_system', 'location=yes')
+			this.iab.create(this.popup.link);
+			console.log('redirect missing',);
+		}
+	}
+	redirectBanner(banner){
+		if(banner.category_id && banner.sp_id && banner.subcat_id){
+			this.navCtrl.push(Plumber_profilePage,{subcat_id: banner.subcat_id, cat_id: banner.category_id, sp_id:banner.sp_id})
+		}else if(banner.link){
+			this.iab.create(banner.link);
+			console.log('redirect missing',);
+		}
 	}
 }

@@ -26,16 +26,24 @@ export class My_profilePage {
 	@ViewChild('email') email: NgModel;
 	@ViewChild('address') address: NgModel;
 	@ViewChild('gender') gender: NgModel;
+	@ViewChild('pincode') pincode: NgModel;
 	email_regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	profile = {
 		name: '',
 		mobile: '',
 		email: '',
 		address: '',
-		gender: ''
+		gender: '',
+		pincode: {id:0,name:""}
 	}
+	pin:any;
+	pincodes:any[]=[];
+	pincodeSel:any
 	constructor(private http: HttpClient, public camera: Camera, public actionsheet: ActionSheetController, public storage: Storage, public navCtrl: NavController, public toastController: ToastController) {
 
+	}
+	async ngOnInit() {
+		await this.getPincodes();
 	}
 
 	ionViewDidEnter(){
@@ -48,6 +56,7 @@ export class My_profilePage {
 		  this.profile.address = this.user.address;
 		  this.profile_picture = IMAGE_URL+ this.user.profile_picture;
 		  this.profile.gender = this.user.gender;
+		  this.profile.pincode = this.user.pincode;
 		});
 	}
 
@@ -131,14 +140,16 @@ export class My_profilePage {
 	}
 
 	updateProfile() {
-		if (this.name.valid && this.mobile.valid && this.email.valid && this.address.valid && this.gender.valid) {
+		console.log('this.profile',this.profile);
+		if (this.name.valid && this.mobile.valid && this.email.valid && this.address.valid && this.gender.valid && this.pincode.valid) {
 			let profileObj = {
 				id:this.user['id'],
 				name: this.profile.name,
 				email: this.profile.email,
 				contact: this.profile.mobile,
 				address:this.profile.address,
-				gender: this.profile.gender
+				gender: this.profile.gender,
+				pincode:String(this.profile.pincode.name)
 			};
 			this.showLoader = true;
 			this.http.post<any>(APIURL+'customers/update-profile', profileObj)
@@ -166,6 +177,7 @@ export class My_profilePage {
 						this.user['email'] = this.profile.email;
 						this.user['address'] = this.profile.address;
 						this.user['gender'] = this.profile.gender;
+						this.user['pincode'] = this.profile.pincode;
 						this.storage.set('cuserinfo', JSON.stringify(this.user));
 					    this.navCtrl.setRoot(TabsPage);
 					}
@@ -255,6 +267,44 @@ export class My_profilePage {
 				}
 			})
 		}
+	}
+	pincodeChange($event){
+		console.log('this.pincode',$event);
+	}
+	getPincodes(){
+		return new Promise((res)=>{
+			this.http.get<any>(APIURL+'pincodes')
+			.subscribe({
+				next: response => {
+					if(response.error){
+						const toast = this.toastController.create({
+						  message: response.reason,
+						  duration: 4000,
+						  cssClass: 'toast-danger',
+						  position: 'bottom'
+						});
+						toast.present();
+						res(false);
+					} else {
+						console.log('response',response);
+						this.pincodes = response;
+						res(true);
+					}
+				},
+				error: err => {
+					this.showLoader = false;
+					const toast = this.toastController.create({
+					  message: err.message,
+					  duration: 4000,
+					  cssClass: 'toast-danger',
+					  position: 'bottom'
+					});
+					toast.present();
+					res(false);
+
+				}
+			})
+		});
 	}
 
 }

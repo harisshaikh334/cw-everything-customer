@@ -15,19 +15,19 @@
         <h2 *ngIf="user">Hey {{user.name}},</h2>
         <h2 *ngIf="!user">Hello Sir/Madam,</h2>
         <ion-row>
-            <ion-slides>
-                <ion-slide *ngFor="let banner of banner_images">
-                    <img [src]="banner.image" width="380" height="270"/>
-                </ion-slide>
-            </ion-slides>
-        </ion-row>
-        <ion-row>
             <ion-col col class="search_icon">
                 <ion-icon class="material-icons">search</ion-icon>
             </ion-col>
             <ion-col col>
                 <ion-searchbar (search)="getItems($event)" placeholder="{{'search_placeholder' | translate}}"></ion-searchbar>
             </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-slides *ngIf="banner_images.length>0" autoplay=5000 loop=true speed=500>
+                <ion-slide *ngFor="let banner of banner_images" (click)="redirectBanner(banner)">
+                    <img [src]="banner.image" width="380" height="270"/>
+                </ion-slide>
+            </ion-slides>
         </ion-row>
     </div>
     <div class="categores_container">
@@ -50,7 +50,7 @@
             <!-- <h2>{{popHeading}}</h2> -->
             <button class="close-btn" (click)="hidePop=true"> &#10006;</button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" (click)="redirect()">
             <!-- <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur unde culpa dolorum harum, maxime
                 voluptatibus illo ipsam possimus vitae corrupti quisquam laboriosam aliquid nemo facere velit
